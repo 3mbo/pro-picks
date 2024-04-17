@@ -1,12 +1,13 @@
 // Color Variables
 
-$primary-color: #380F6E;
-$primary-hover-color: #1A0A4F;
+$primary-color: #292160;
+$primary-hover-color: #3A2E83;
 $success-color: #81FEA3;
 $success-hover-color: #4CA865;
 $title-color: #D4E3E5;
-$bg-color: #04121D;
-$bg-color2: #0B3657;
+$bg-color: #030E1C;
+$bg-color2: #0A2445;
+$border-color: #5781BF;
 
 
 body {
@@ -14,11 +15,14 @@ body {
     margin: 0px;
     padding: 0px;
     background-color: $bg-color;
+    color: white;
 }
 
 .content {
     max-width: 1200px;
-    margin: auto;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
     padding: 20px;
     background-color: $bg-color2;
     border-radius: 10px;
@@ -40,7 +44,7 @@ body {
 
         th, td {
             padding: 10px;
-            border: 1px solid #ddd;
+            border: 1px solid $border-color;
 
             th {
                 background-color: #f0f0f0;
@@ -73,6 +77,15 @@ body {
     }
 
     #btn_add {
+        background-color: $primary-color;
+        color: white;
+        cursor: pointer;
+        &:hover {
+            background-color: $primary-hover-color;
+        }
+    }
+
+    #btn_update{
         background-color: $primary-color;
         color: white;
         cursor: pointer;

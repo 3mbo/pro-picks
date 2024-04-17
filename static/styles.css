@@ -2,14 +2,17 @@ body {
   font-family: Arial, Helvetica, sans-serif;
   margin: 0px;
   padding: 0px;
-  background-color: #04121D;
+  background-color: #030E1C;
+  color: white;
 }
 
 .content {
   max-width: 1200px;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 30px;
   padding: 20px;
-  background-color: #0B3657;
+  background-color: #0A2445;
   border-radius: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.04);
   text-align: justify;
@@ -27,7 +30,7 @@ body {
 }
 .content table th, .content table td {
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #5781BF;
 }
 .content table th th, .content table td th {
   background-color: #f0f0f0;
@@ -38,14 +41,14 @@ body {
   padding: 10px;
   margin: 5px;
   border-radius: 5px;
-  background-color: #380F6E;
+  background-color: #292160;
   color: #D4E3E5;
   text-decoration: none;
   transition: background-color 0.1s;
   text-align: center;
 }
 .content a:hover {
-  background-color: #1A0A4F;
+  background-color: #3A2E83;
 }
 .content input {
   padding: 10px;
@@ -54,12 +57,20 @@ body {
   border-radius: 5px;
 }
 .content #btn_add {
-  background-color: #380F6E;
+  background-color: #292160;
   color: white;
   cursor: pointer;
 }
 .content #btn_add:hover {
-  background-color: #1A0A4F;
+  background-color: #3A2E83;
+}
+.content #btn_update {
+  background-color: #292160;
+  color: white;
+  cursor: pointer;
+}
+.content #btn_update:hover {
+  background-color: #3A2E83;
 }
 
 /*# sourceMappingURL=styles.css.map */
