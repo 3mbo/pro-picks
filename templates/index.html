@@ -9,26 +9,26 @@
         <h1> Task Tactics Body </h1>
 
         {% if tasks | length < 1 %}
-        <h3>No tasks. Create one here.</h3>
+            <h3>No tasks. Create one here.</h3>
         {% else %}
-        <table>
-            <tr>
-                <th>Task</th>
-                <th>Added</th>
-                <th>Actions</th>
-            </tr>
-            {% for task in tasks %}
+            <table>
                 <tr>
-                    <td>{{ task.content }}</td>
-                    <td>{{ task.created_at.strftime("%Y-%m-%d") }}</td>
-                    <td>
-                        <a href="/delete/{{ task.id }}">Delete</a>
-                        <br>
-                        <a href="/update/{{ task.id }}">Edit</a>
-                    </td>
+                    <th>Task</th>
+                    <th>Added</th>
+                    <th>Actions</th>
                 </tr>
-            {% endfor %}
-        </table>
+                {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.content }}</td>
+                        <td>{{ task.created_at.strftime("%Y-%m-%d") }}</td>
+                        <td>
+                            <a href="/delete/{{ task.id }}">Delete</a>
+                            <br>
+                            <a href="/update/{{ task.id }}">Edit</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
         {% endif %}
         <form action="/" method="POST">
             <input type="text" name="content" id="content">
@@ -36,4 +36,22 @@
         </form>
     </div>
 
+    <div class="container">
+        <div class="slots">
+            <!-- Create empty slots for champions -->
+            {% for slot_id in range(1, 6) %}
+                <div class="slot" id="slot_{{ slot_id }}"></div>
+            {% endfor %}
+        </div>
+
+        <div class="champions" id="champions">
+            <h1> Champions </h1>
+            <div>
+                {% for champion in champions %}
+                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion.id }}.png"
+                         alt="Champion Image" class="champion" data-id="{{ champion.id }}">
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 {% endblock %}
