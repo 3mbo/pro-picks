@@ -54,7 +54,7 @@ def fetch_esports_data():
             f"(SG.OverviewPage LIKE '%LCS%' OR SG.OverviewPage LIKE '%LCK%' OR"
             f" SG.OverviewPage LIKE '%LPL%' OR SG.OverviewPage LIKE '%LEC%')"
         ),
-        limit=50,
+        limit=200,
         order_by="SG.DateTime_UTC DESC"
     )
     return response
@@ -77,8 +77,7 @@ def analyze_esports_data(data):
 
         # Define the pick groupings for Blue and Red teams
         blue_groups = [blue_picks[0:1], blue_picks[1:3], blue_picks[3:5]]
-        red_groups = [red_picks[0:2], red_picks[2:3], red_picks[3
-                                                                :4], red_picks[4:5]]
+        red_groups = [red_picks[0:2], red_picks[2:3], red_picks[3:4], red_picks[4:5]]
 
         # Process each group for Blue and Red teams (for picks)
         for i, group in enumerate(blue_groups):
