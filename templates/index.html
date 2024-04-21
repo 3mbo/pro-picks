@@ -1,57 +1,92 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <title>Task Tactics Title</title>
+    <title>Task Tactics</title>
 {% endblock %}
 
 {% block body %}
     <div class="content">
-        <h1> Task Tactics Body </h1>
+        <h1>Task Tactics</h1>
 
-        {% if tasks | length < 1 %}
-            <h3>No tasks. Create one here.</h3>
-        {% else %}
-            <table>
-                <tr>
-                    <th>Task</th>
-                    <th>Added</th>
-                    <th>Actions</th>
-                </tr>
-                {% for task in tasks %}
+        <!-- Task section -->
+        <div id="tasks-section">
+            {% if tasks | length < 1 %}
+                <h3>No tasks. Create one here.</h3>
+            {% else %}
+                <table>
                     <tr>
-                        <td>{{ task.content }}</td>
-                        <td>{{ task.created_at.strftime("%Y-%m-%d") }}</td>
-                        <td>
-                            <a href="/delete/{{ task.id }}">Delete</a>
-                            <br>
-                            <a href="/update/{{ task.id }}">Edit</a>
-                        </td>
+                        <th>Task</th>
+                        <th>Added</th>
+                        <th>Actions</th>
                     </tr>
-                {% endfor %}
-            </table>
-        {% endif %}
-        <form action="/" method="POST">
-            <input type="text" name="content" id="content">
-            <input type="submit" value="Add Task" id="btn_add">
-        </form>
-    </div>
-
-    <div class="container">
-        <div class="slots">
-            <!-- Create empty slots for champions -->
-            {% for slot_id in range(1, 6) %}
-                <div class="slot" id="slot_{{ slot_id }}"></div>
-            {% endfor %}
+                    {% for task in tasks %}
+                        <tr>
+                            <td>{{ task.content }}</td>
+                            <td>{{ task.created_at.strftime("%Y-%m-%d") }}</td>
+                            <td>
+                                <a href="/delete/{{ task.id }}">Delete</a>
+                                <br>
+                                <a href="/update/{{ task.id }}">Edit</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
         </div>
 
-        <div class="champions" id="champions">
-            <h1> Champions </h1>
-            <div>
+        <!-- Add Task Form -->
+        <form id="add-task-form" action="/" method="POST">
+            <input type="text" name="content" id="content" placeholder="Enter new task">
+            <input type="submit" value="Add Task" id="btn_add">
+        </form>
+
+        <!-- Champion Slots and Elements Section -->
+        <div id="slots-and-elements-container" class="flex-container">
+            <!-- Data View Selector -->
+            <div id="data-view-selector-container">
+                <label for="data-view-selector"></label>
+                <div class="toggle-switch">
+                    <input type="checkbox" id="data-view-toggle">
+                    <label for="data-view-toggle"></label>
+                </div>
+            </div>
+            <!-- Champion Slots Section -->
+            <div id="slots-section" class="slots">
+                {% for slot_id in range(1, 6) %}
+                    <div class="slot" id="slot_{{ slot_id }}"></div>
+                {% endfor %}
+            </div>
+
+            <!-- Data Elements Section -->
+            <div id="data-elements-section">
+                <!-- This section will be used to display relevant data temporarily -->
+            </div>
+        </div>
+
+        <!-- Champions List -->
+        <div id="champions-section">
+            <h2>Champions</h2>
+            <div id="champions-list">
                 {% for champion in champions %}
                     <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion.id }}.png"
                          alt="Champion Image" class="champion" data-id="{{ champion.id }}">
                 {% endfor %}
             </div>
+        </div>
+
+        <!-- Data Storage -->
+        <div id="data-storage-section" style="display: none;">
+            {% for champion in champions %}
+                <div class="champion-data"
+                     data-id="{{ champion.id }}"
+                     data-name="{{ champion.name }}"
+                     data-blue-picks="{{ champion.blue_picks | tojson }}"
+                     data-blue-bans="{{ champion.blue_bans | tojson }}"
+                     data-red-picks="{{ champion.red_picks | tojson }}"
+                     data-red-bans="{{ champion.red_bans | tojson }}"
+                     data-image-url="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion.id }}.png">
+                </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock %}
