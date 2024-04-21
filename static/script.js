@@ -34,7 +34,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Select champions list, slots, and data storage section
     const championsList = document.getElementById('champions-list');
     const slots = document.querySelectorAll('.slot');
-    const dataStorageSection = document.getElementById('data-storage-section');
     let lastFullSlot = null;
     const dataViewToggle = document.getElementById('data-view-toggle');
     const state = {
