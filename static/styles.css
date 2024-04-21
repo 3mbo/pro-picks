@@ -1,19 +1,26 @@
+/* General body styles */
 body {
   font-family: Arial, Helvetica, sans-serif;
-  margin: 0px;
-  padding: 0px;
+  margin: 0;
+  padding: 0;
   background-color: #030E1C;
   color: white;
 }
 
+/* Main content styling */
 .content {
   max-width: 1200px;
   margin: 30px auto 0;
   padding: 20px;
   background-color: #0A2445;
   border-radius: 10px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.04);
   text-align: justify;
+  /* Adjust heading colors */
+  /* Table styles */
+  /* Link styling */
+  /* Input styles */
+  /* Button styles */
 }
 .content h1, .content h4 {
   color: #D4E3E5;
@@ -60,30 +67,132 @@ body {
   background-color: #3A2E83;
 }
 
-.container {
+/* Container for slots and blue elements sections */
+#slots-and-elements-container {
   display: flex;
-  flex-direction: row;
+  justify-content: space-between; /* Distribute space evenly between the two sections */
+  align-items: flex-start; /* Align items at the top */
+  gap: 20px;
+  margin-top: 20px;
+}
+
+/* Slots section */
+#slots-section {
+  flex: none; /* Do not allow flexible sizing */
+  width: 100px;
+  height: 600px;
+  display: flex; /* Use flex layout */
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Styling for slots */
+.slot {
+  height: 100px;
+  border: 1px solid #ccc;
+  display: flex;
   justify-content: center;
   align-items: center;
-  padding: 20px;
 }
 
-.slots {
-  width: 20%;
-  margin-right: 20px;
+/* Styling for images in slots */
+.slot img {
+  max-width: 98%; /* Set max-width to 90% of the slot size */
+  max-height: 98%; /* Set max-height to 90% of the slot size */
 }
 
-.champions {
-  width: 80%;
-  text-align: center;
+/* Styling for blue elements section */
+#data-elements-section {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  overflow-y: auto; /* Allow for scrolling if content overflows */
+  /* Set up grid layout */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+  gap: 10px;
 }
 
-.slot {
-  background-color: #f0f0f0;
-  height: 100px;
-  width: 100px;
+/* Styling for individual elements within the data elements section */
+#data-elements-section .champion-elements {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center-align content horizontally */
+  justify-content: center; /* Center-align content vertically */
   border: 1px solid #5781BF;
-  margin: 5px;
+  border-radius: 5px; /* Add some rounding to the border */
+  padding: 10px;
+  background-color: #1C3957;
+}
+
+/* Styling for the integer text in data elements */
+#data-elements-section .champion-elements.p {
+  margin-top: 10px;
+  font-size: 16px;
+  text-align: center;
+  color: white;
+}
+
+/* Styling for the highlighted slots */
+.highlighted-slot {
+  border: 2px solid #b4a8ff;
+  background-color: #3A2E83;
+}
+
+/* Styling for the champion list*/
+#champions-list .champion {
+  width: 70px;
+  height: 70px;
+  margin: 0;
+  padding: 0;
+  display: inline-block;
+}
+#champions-list .champion img {
+  width: 100%;
+  height: 100%;
+}
+
+.toggle-switch {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  height: 34px;
+}
+
+.toggle-switch input {
+  display: none;
+}
+
+.toggle-switch label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #2196F3;
+  border-radius: 34px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.toggle-switch label:before {
+  content: "";
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  width: 26px;
+  height: 26px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.toggle-switch input:checked + label {
+  background-color: #f44336;
+}
+
+.toggle-switch input:checked + label:before {
+  transform: translateX(26px);
 }
 
 /*# sourceMappingURL=styles.css.map */
