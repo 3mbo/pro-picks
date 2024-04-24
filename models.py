@@ -15,16 +15,20 @@ class Champion(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
 
-    # Add attributes to store blue picks and bans
+    # Attributes to store blue picks and bans
     blue_picks = db.Column(db.JSON, nullable=False, default=lambda: [0, 0, 0, 0])
     blue_bans = db.Column(db.JSON, nullable=False, default=lambda: [0, 0])
 
-    # Add attributes to store red picks and bans
+    # Attributes to store red picks and bans
     red_picks = db.Column(db.JSON, nullable=False, default=lambda: [0, 0, 0, 0])
     red_bans = db.Column(db.JSON, nullable=False, default=lambda: [0, 0])
 
+    # Attributes to store role stats in the order: Top, Jungle, Mid, Bot, Support
+    roles = db.Column(db.JSON, nullable=False, default=lambda: [0, 0, 0, 0, 0])
+
     # Relationship with Slot model
     slots = db.relationship('Slot', back_populates='champion', lazy=True)
+
 
 
 class Slot(db.Model):

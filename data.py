@@ -7,7 +7,6 @@ import requests
 from database import db
 from models import Champion
 
-
 def fetch_champion_data():
     url = 'https://ddragon.leagueoflegends.com/cdn/14.8.1/data/en_US/champion.json'
     response = requests.get(url)
@@ -59,6 +58,43 @@ def fetch_esports_data():
     )
     return response
 
+def fetch_player_data():
+    """Fetches player data from the API."""
+    # Initialize the EsportsClient
+    site = EsportsClient("lol")
+
+    # Calculate the date one year ago
+    time_ago = datetime.now() - timedelta(days=100)
+    time_str = time_ago.strftime('%Y-%m-%d 00:00:00')  # Format the date
+
+    # Define a function to perform the query with an optional offset
+    def perform_query(offset=0):
+        response = site.cargo_client.query(
+            tables="ScoreboardPlayers=SP, ScoreboardGames=SG",
+            join_on="SP.GameId=SG.GameId",
+            fields=(
+                "SP.Champion, SP.IngameRole, "
+                "SG.DateTime_UTC, SG.Team1, SG.Team2"
+            ),
+            where=(
+                f"SG.DateTime_UTC >= '{time_str}' AND "
+                f"(SG.OverviewPage LIKE '%LCS%' OR SG.OverviewPage LIKE '%LCK%' OR"
+                f" SG.OverviewPage LIKE '%LPL%' OR SG.OverviewPage LIKE '%LEC%' OR"
+                f" SG.OverviewPage LIKE '%World%' OR SG.OverviewPage LIKE '%Mid-Season%')"
+            ),
+            limit=500,
+            order_by="SG.DateTime_UTC DESC",
+            offset=offset
+        )
+        return response
+    limit = 500
+    queries = 4
+    merged_response = perform_query(offset=0)
+    for i in range(queries-1):
+        response = perform_query(offset=(i+1)*limit)
+        merged_response += response
+
+    return merged_response
 
 def analyze_esports_data(data):
     # Initialize a dictionary to hold the count of picks and bans for each champion for Blue and Red teams separately
@@ -77,7 +113,8 @@ def analyze_esports_data(data):
 
         # Define the pick groupings for Blue and Red teams
         blue_groups = [blue_picks[0:1], blue_picks[1:3], blue_picks[3:5]]
-        red_groups = [red_picks[0:2], red_picks[2:3], red_picks[3:4], red_picks[4:5]]
+        red_groups = [red_picks[0:2], red_picks[2:3], red_picks[3
+                                                                :4], red_picks[4:5]]
 
         # Process each group for Blue and Red teams (for picks)
         for i, group in enumerate(blue_groups):
@@ -97,12 +134,41 @@ def analyze_esports_data(data):
             if i < 2:
                 champions_dict[ban]['Red']['bans'][i] += 1
 
-    # Convert the dictionary to JSON format
-    json_data = json.dumps(champions_dict, indent=4)
-    return json_data
+
+    return champions_dict
 
 
-def store_analyzed_data(data):
+def analyze_player_data(player_data):
+    """Analyzes player data and calculates the frequency of each role for each unique champion.
+
+    Args:
+        player_data (list of dict): The list of player data dictionaries.
+
+    Returns:
+        dict: A dictionary where the keys are champions and the values are lists containing the
+              frequency of each role for that champion in the order [Top, Jungle, Mid, Bot, Support].
+    """
+    # Define the roles in the desired order and map them to indices in the list
+    roles_order = ["Top", "Jungle", "Mid", "Bot", "Support"]
+    role_to_index = {role: index for index, role in enumerate(roles_order)}
+
+    # Initialize a defaultdict with a function that returns a list of five zeros
+    champion_role_counts = defaultdict(lambda: [0, 0, 0, 0, 0])
+
+    # Iterate through the player data
+    for entry in player_data:
+        # Get the champion and ingame role from the entry
+        champion = entry.get("Champion")
+        role = entry.get("IngameRole")
+
+        # Check if the role is one of the predefined roles and if the champion is valid
+        if role in roles_order and champion:
+            # Increment the count of the role for the current champion
+            index = role_to_index[role]
+            champion_role_counts[champion][index] += 1
+    return champion_role_counts
+
+def store_esports_data(data):
     # Verify `esports_data` format: Parse it if necessary
     if isinstance(data, str):
         try:
@@ -146,6 +212,22 @@ def store_analyzed_data(data):
     db.session.commit()
 
 
+def store_player_data(data):
+    # Stores the analyzed player data in the Champion model.
+
+    # Iterate through each champion name and role counts
+    for champion_name, role_counts in data.items():
+        # Query the database to find the Champion object with the given name
+        champion = Champion.query.filter_by(name=champion_name).first()
+
+        # Add to session
+        champion.roles = role_counts
+        db.session.add(champion)
+    # Commit the changes to the database
+    db.session.commit()
+
+
+
 def add_champions_to_database(data):
     Champion.query.delete()
     for champion in data:
@@ -153,13 +235,3 @@ def add_champions_to_database(data):
         db.session.add(champ)
     db.session.commit()
 
-
-if __name__ == "__main__":
-    esports_data = fetch_esports_data()  # Replace with your data fetching function
-    json_esports = analyze_esports_data(esports_data)
-
-    champion_data = fetch_champion_data()
-    add_champions_to_database(champion_data)
-
-    print(json_esports)  # This prints the JSON-formatted analyzed data
-    print(champion_data)
