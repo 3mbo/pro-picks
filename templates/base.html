@@ -4,9 +4,15 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Task Tactics Title{% endblock %}</title>
+    <title>{% block title %}Build Your Deck | Tempname{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <defs>
+        <filter id="soften" x="-10%" y="-10%" width="120%" height="120%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="1"></feGaussianBlur>
+        </filter>
+    </defs>
     <svg style="display: none;">
         <symbol id="role-t" viewBox="0 0 34 34">
             <path opacity="0.5" fill="#ffffff" fill-rule="evenodd" d="M21,14H14v7h7V14Zm5-3V26L11.014,26l-4,4H30V7.016Z"></path>
@@ -23,17 +29,36 @@
             <path opacity="0.5" fill="#ffffff" fill-rule="evenodd" d="M13,20h7V13H13v7ZM4,4V26.984l3.955-4L8,8,22.986,8l4-4H4Z"></path>
             <polygon class="active" fill="#ffffff" points="29.997 5.955 25 11 25 25 11 25 5.955 29.997 30 30 29.997 5.955"></polygon>
         </symbol>
-        <symbol id="role-s" viewBox="0 0 34 34">
+        <symbol id="role-s" viewBox="-2 -2 36 36">
             <path class="active" fill="#ffffff" fill-rule="evenodd" d="M26,13c3.535,0,8-4,8-4H23l-3,3,2,7,5-2-3-4h2ZM22,5L20.827,3H13.062L12,5l5,6Zm-5,9-1-1L13,28l4,3,4-3L18,13ZM11,9H0s4.465,4,8,4h2L7,17l5,2,2-7Z"></path>
         </symbol>
+        <symbol id="arrow-left" viewBox="0 0 24 24">
+            <path class="active" fill="#ffffff" fill-rule="evenodd" d="M12 4L4 12L12 20" stroke-width="2" ></path>
+        </symbol>
+        <symbol id="arrow-right" viewBox="0 0 24 24">
+            <path class="active" fill="#ffffff" fill-rule="evenodd" d="M12 4L20 12L12 20" stroke-width="2"></path>
+        </symbol>
+        <symbol id="pairs" viewBox="0 0 34 34" shape-rendering="geometricPrecision">
+            <rect width="18" height="24" rx="3" ry="3" transform="matrix(.486091 0.339908 -.352377 0.503923 17 7)" fill="#8fa9b3" stroke="#0278a3" stroke-width="3" stroke-linejoin="round"></rect>
+            <rect width="11" height="20" rx="3" ry="3" transform="matrix(.933302 -.274056 0.275946 0.939737 6 6.5)" fill="#030E1C" stroke-width="0"></rect>
+            <rect width="18" height="24" rx="3" ry="3" transform="matrix(.569927 -.164334 0.173461 0.60158 4 10)" fill="#8fa9b3" stroke="#0278a3" stroke-width="3" stroke-linejoin="round"></rect>
+        </symbol>
+        <symbol id="counters" viewBox="0 0 34 34" shape-rendering="geometricPrecision">
+            <polygon points="0,-9.5 8.4,4.75 -8.4,4.75" transform="matrix(-.723378-.569418 0.704897-1.314154 21.42 11)" fill="#8fa9b3" stroke="#0278a3" stroke-width="0.9" stroke-linejoin="round"></polygon>
+            <polygon points="0,-9.5 8.4,4.75 -8.4,4.75" transform="matrix(.780347 0.639194-1.142231 0.981731 14 22)" fill="#8fa9b3" stroke="#0278a3" stroke-width="0.9" stroke-linejoin="round"></polygon>
+            <ellipse rx="3.0" ry="2.4" transform="translate(23 11.5)" fill="#8fa9b3" stroke-width="0"></ellipse>
+            <rect width="22" height="13" rx="0" ry="0" transform="matrix(.775695 0.6015 -0.639439 0.824621 12 4)" fill="#030E1C" stroke-width="0"></rect>
+            <rect width="10.5" height="14.5" rx="1.5" ry="1.5" transform="matrix(-.577268 0.743506-.873983-.678573 27 18)" fill="#c48ba3" stroke="#d40058" stroke-width="1.5" stroke-linejoin="round"></rect>
+        </symbol>
     </svg>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
     {% block head %}{% endblock %}
 </head>
-<body>
-    {% block body %}{% endblock %}
-    <script type="module" src="{{ url_for('static', filename='state.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='displayUpdate.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='eventHandlers.js') }}"></script>
-    <script type="module" src="{{ url_for('static', filename='initialization.js') }}"></script>
-</body>
+{% block body %}{% endblock %}
+<script type="module" src="{{ url_for('static', filename='state.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='displayUpdate.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='eventHandlers.js') }}"></script>
+<script type="module" src="{{ url_for('static', filename='initialization.js') }}"></script>
 </html>

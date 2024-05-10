@@ -1,20 +1,22 @@
 import {
     addSelectedRole,
+    getAllChampionData,
     getChampionData,
+    getChampionDataByName,
     getDataView,
     getRelevantSlots,
-    getSelectedRoles
+    getSelectedRoles,
+    getTransactionData
 } from './state.js';
 
-
-export function displayRelevantData(dataView) {
+export function displayRelevantData(dataView, initial) {
     const statsGrid = document.getElementById('stats-grid');
-    statsGrid.innerHTML = '';
+    const sideboard = document.getElementById('sideboard');
+    const commons = document.getElementById('commons');
+
 
     const relevantSlots = getRelevantSlots(dataView);
     console.log('Relevant slots:', relevantSlots);
-
-    const championData = getChampionData();
 
     // Determine the constant for the slot indexing based on the first relevant slot and dataView
     let slotIndexConstant;
@@ -24,6 +26,7 @@ export function displayRelevantData(dataView) {
         console.log(`No open slots available for ${dataView} view.`);
         return;
     }
+
 
     console.log('First relevant slot:', firstRelevantSlot);
 
@@ -45,152 +48,152 @@ export function displayRelevantData(dataView) {
 
     console.log('Slot index constant:', slotIndexConstant);
 
-    // Create a list to store relevant champions' data
-    const relevantChampionsData = [];
+    const championData = getAllChampionData();
+
+    // Sort by pick rate for current relevant slots
+    championData.sort((a, b) => b[dataView].picks[slotIndexConstant] - a[dataView].picks[slotIndexConstant]);
 
     let relevantTotal = 0;
-    // Iterate through champions data
+    // Iterate through
     championData.forEach(champion => {
-        // Determine the element to show based on the slotIndexConstant
-        const elementToShow = champion[dataView].picks[slotIndexConstant];
 
-        // console.log(`Champion: ${champion.name}, Element to show:`, elementToShow);
+        // Determine the champion to show based on the slotIndexConstant
+        const relevantFrequency = champion[dataView].picks[slotIndexConstant];
 
-        // If the element is greater than 0, add the champion data to the list
-        if (elementToShow > 0) {
-            relevantChampionsData.push({
-                name: champion.name,
-                element: elementToShow,
-                imageUrl: champion.imageUrl,
-                roles: champion.roles,
-            });
+        let relevance = champion.relevance
+        // If the relevant frequency is greater than 0, add the champion data to the list
+        if (relevantFrequency > 0) {
+            relevance += 1
             // Calculate total for a percentage later.
-            relevantTotal = Math.max(relevantTotal, elementToShow);
+            relevantTotal = Math.max(relevantTotal, relevantFrequency);
         }
-    });
-
-    // Sort the relevant champions' data based on the integer element in descending order
-    relevantChampionsData.sort((a, b) => b.element - a.element);
-    console.log('Sorted relevant champions data:', relevantChampionsData);
-
-
-    // Iterate through the sorted data and display the champion images and their corresponding data
-    relevantChampionsData.forEach(championData => {
         // Create a statsCard div to hold the roleBoxesContainer and the imageContainer
-        const statsCardWrapper = document.createElement('div');
-        statsCardWrapper.classList.add('stats-card-wrapper');
+        const statsCardWrapper = document.querySelector(`#stats-section [data-id="${champion.id}"]`);
+        const statsCard = document.querySelector(`.stats-card-wrapper [data-id="${champion.id}"]`);
 
-        const statsCard = document.createElement('div');
-        statsCard.classList.add('stats-card');
+        if (initial) {
+            const roleBoxesContainer = statsCardWrapper.querySelector('.role-boxes-container');
+            const roleBoxes = roleBoxesContainer.querySelectorAll('.role-box');
 
-        // Create a imageContainer div element to hold the champion image
-        const imageContainer = document.createElement('div');
-        imageContainer.classList.add('image-container');
+            let gradientColors = [];
+            const roleColors = ['rgba(232,58,58,0.8)', 'rgba(60,138,60,0.8)', 'rgba(32,125,212,0.8)', 'rgba(214,181,15,0.8)', 'rgba(221,65,210,0.8)'];
+            const roleBGColors = ['rgba(180,55,55,0.8)', 'rgba(47,133,13,0.8)', 'rgba(0,91,182,0.8)',
+                'rgba(175,147,5,0.8)', 'rgba(159,44,157,0.8)'];
+            const gradientIntervals = ['15% 15%', '30% 30%', '50% 50%', '70% 70%', '85% 85%'];
+            const nearTransparent = 'rgba(50,50,100,0.1)'
+            const noRoleColor = 'rgba(60,60,60,0.8)'
 
-        const roleBoxesContainer = document.createElement('div');
-        roleBoxesContainer.classList.add('role-boxes-container');
-
-        let gradientColors = [];
-        const roleColors = ['rgba(232,58,58,0.8)', 'rgba(67,240,67,0.8)', 'rgba(32,125,212,0.8)', 'rgba(214,181,15,0.8)', 'rgba(189,67,217,0.8)'];
-        const roleBGColors = ['rgba(180,55,55,0.8)', 'rgba(47,133,13,0.8)', 'rgba(0,91,182,0.8)',
-                                            'rgba(175,147,5,0.8)', 'rgba(159,44,157,0.8)'];
-        const gradientIntervals = ['15% 15%', '30% 30%', '50% 50%', '70% 70%', '85% 85%'];
-        const nearTransparent = 'rgba(50,50,100,0.1)'
-
-        // Create and add five empty boxes (div elements) to the boxes container
-        for (let i = 0; i < 5; i++) {
-            if (championData.roles[i] > 0) {
-                const roleBox = document.createElement('div');
-                roleBox.classList.add('role-box');
-
+            if (champion.pick_total > 0) {
+                // Create a Set to collect data-letter-roles
+                const dataLetterRoles = new Set();
                 const roleLetters = ['t', 'j', 'm', 'b', 's'];
-                const letter = roleLetters[i];
+                roleBoxes.forEach((roleBox, index) => {
+                    if (champion.roles[index] > 0) {
+                        const letter = roleLetters[index];
 
-                roleBox.style.backgroundColor = roleColors[i];
-                roleBox.setAttribute('data-letter', letter);
+                        roleBox.style.backgroundColor = roleColors[index];
+                        roleBox.setAttribute('data-letter-role', letter);
+                        dataLetterRoles.add(letter);
 
-                // Create an <svg> element containing a <use> element that references the desired symbol
-                const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                const useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-                useElement.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#role-${roleLetters[i]}`);
-                svgElement.appendChild(useElement);
+                        // Create an <svg> element containing a <use> element that references the desired symbol
+                        const svgElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                        const useElement = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+                        useElement.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#role-${roleLetters[index]}`);
+                        svgElement.appendChild(useElement);
 
-                roleBox.appendChild(svgElement);
-                roleBoxesContainer.appendChild(roleBox);
-                // Set includeTop and includeBot based on the loop index
-                if (i === 0) {
-                   gradientColors.push(`${roleBGColors[i]} ${gradientIntervals[i]}`);
-                } else if (i === 1) {
-                    gradientColors.push(`${roleBGColors[i]} ${gradientIntervals[i]}`);
-                } else if (i === 2) {
-                    gradientColors.push(`${roleBGColors[i]} ${gradientIntervals[i]}`);
-                } else if (i === 3) {
-                    gradientColors.push(`${roleBGColors[i]} ${gradientIntervals[i]}`);
-                } else if (i === 4) {
-                    gradientColors.push(`${roleBGColors[i]} ${gradientIntervals[i]}`);
-                }
+                        roleBox.appendChild(svgElement);
+                        roleBox.style.display = 'flex';
+                        gradientColors.push(`${roleBGColors[index]} ${gradientIntervals[index]}`);
+
+                    } else {
+                        roleBox.style.display = 'none';
+                        if (index === 0) {
+                            gradientColors.push(`${nearTransparent} 10% 10%`);
+
+                        } else if (index === 4) {
+                            gradientColors.push(`${nearTransparent} 90% 90%`);
+
+                        } else {
+                            gradientColors.push(`${nearTransparent} ${gradientIntervals[index]}`);
+                        }
+                    }
+                })
+                const dataLetterRolesString = Array.from(dataLetterRoles).join(',');
+                roleBoxesContainer.setAttribute('data-letter-roles', dataLetterRolesString);
             } else {
-                if (i === 0) {
-                    gradientColors.push(`${nearTransparent} 10% 10%`);
-
-                }else if (i===4) {
-                    gradientColors.push(`${nearTransparent} 90% 90%`);
-
-                }else {
-                    gradientColors.push(`${nearTransparent} ${gradientIntervals[i]}`);
-                }
+                gradientColors.push(`${noRoleColor} 10% 10%`);
             }
+
+            // Add the boxes container to the outer div
+            const gradientString = `${gradientColors.join(', ')}`;
+            statsCard.style.borderImageSource = `linear-gradient(to bottom right, ${nearTransparent} -30% -30%, ${gradientString}, ${nearTransparent} 120% 120%)`;
+            statsCard.style.backgroundImage = `radial-gradient(ellipse 150% 100% at center, transparent, #030E1C, transparent),
+                linear-gradient(to bottom right, ${nearTransparent} -30% -30%, ${gradientString}, ${nearTransparent} 120% 120%)`;
+            statsCard.style.borderWidth = '2px';
+            statsCard.style.borderStyle = 'solid';
+            statsCard.style.borderImageSlice = '1';
         }
-        // Add the boxes container to the outer div
-        const gradientString = `${gradientColors.join(', ')}`;
-        statsCard.style.borderImageSource = `linear-gradient(to bottom right, ${nearTransparent} -30% -30%, ${gradientString}, ${nearTransparent} 120% 120%)`;
-        statsCard.style.backgroundImage = `radial-gradient(ellipse 150% 100% at center, transparent, #030E1C, transparent),
-        linear-gradient(to bottom right, ${nearTransparent} -30% -30%, ${gradientString}, ${nearTransparent} 120% 120%)`;
-        statsCard.style.borderWidth = '2px';
-        statsCard.style.borderStyle = 'solid';
-        statsCard.style.borderImageSlice = '1';
-        statsCard.appendChild(roleBoxesContainer);
+        const barContainer = document.querySelector(`.stats-card-wrapper[data-id="${champion.id}"] .stats-card[data-id="${champion.id}"] .bar-container`);
+        const bar = barContainer.querySelector('.bar')
+        bar.style.display = 'none';
 
+        const numberDisplay = barContainer.nextElementSibling;
+        numberDisplay.textContent = relevantFrequency.toString();
+        numberDisplay.style.display = 'none';
+        if (relevantFrequency > 0) {
+            // Create a div element to represent the bar
+            const percentage = (relevantFrequency / relevantTotal) * 100;
 
+            // Add a buffer for low percentages
+            const percentageWithBuffer = ((6 + percentage) / 106) * 100
+            // Set the width of the bar based on the calculated percentage
+            bar.style.width = `${percentageWithBuffer}%`;
+            bar.style.display = '';
+            numberDisplay.style.display = '';
+        }
 
-        // Create an image element to display the champion image
-        const img = document.createElement('img');
-        img.src = championData.imageUrl;
-        img.alt = `${championData.name} image`;
-        img.className = 'champion-image';
-        imageContainer.appendChild(img);
-
-        // Create a div element to represent the bar
-        const bar = document.createElement('div');
-        const barContainer = document.createElement('div');
-        barContainer.classList.add('bar-container');
-        bar.classList.add('bar');
-
-        // Calculate the percentage of the total
-        const elementValue = Number(championData.element);
-        const percentage = (elementValue / relevantTotal) * 100;
-
-        // Add a buffer for low percentages
-        const percentageWithBuffer = ((10 + percentage) / 110) * 100
-        // Set the width of the bar based on the calculated percentage
-        bar.style.width = `${percentageWithBuffer}%`;
-
-        // Create a number-display element to display the numerical value inside the bar
-        const numberDisplay = document.createElement('div');
-        numberDisplay.classList.add('number-display');
-        numberDisplay.textContent = elementValue.toString();
-
-        bar.appendChild(numberDisplay);
-        barContainer.appendChild(bar);
-        statsCard.appendChild(imageContainer);
-        statsCard.appendChild(barContainer);
-
-        statsCardWrapper.appendChild(statsCard)
-        statsGrid.appendChild(statsCardWrapper);
-
-        // Log the display
-        console.log(`Displaying ${dataView} data for champions with slotIndexConstant ${slotIndexConstant}.`);
+        if (relevance===2) {
+            statsGrid.appendChild(statsCardWrapper)
+        } else if (relevance===1){
+            sideboard.appendChild(statsCardWrapper);
+        } else if (relevance===0) {
+            statsCard.style.borderRadius = '5px';
+            commons.appendChild(statsCardWrapper);
+        }
     });
+    if (initial) {
+        const invisible_filler0 = document.createElement('div')
+        invisible_filler0.style.flex = "10";
+
+        const invisible_filler1 = invisible_filler0.cloneNode(true)
+        const invisible_filler2 = invisible_filler0.cloneNode(true)
+
+        invisible_filler0.setAttribute("class", "invisible-filler-0")
+        invisible_filler1.setAttribute("class", "invisible-filler-1")
+        invisible_filler2.setAttribute("class", "invisible-filler-2")
+
+        statsGrid.appendChild(invisible_filler0)
+        sideboard.appendChild(invisible_filler1)
+        commons.appendChild(invisible_filler2)
+    }
+    else {
+        const invisible_filler0 = statsGrid.querySelector('.invisible-filler-0');
+        const invisible_filler1 = sideboard.querySelector('.invisible-filler-1');
+        const invisible_filler2 = commons.querySelector('.invisible-filler-2');
+
+        statsGrid.removeChild(invisible_filler0)
+        sideboard.removeChild(invisible_filler1)
+        commons.removeChild(invisible_filler2)
+            
+        statsGrid.appendChild(invisible_filler0)
+        sideboard.appendChild(invisible_filler1)
+        commons.appendChild(invisible_filler2)
+
+
+    }
+
+    console.log(`Displaying ${dataView} data for champions with slotIndexConstant ${slotIndexConstant}.`);
+    initial = true;
 }
 
 export function highlightRelevantSlots() {
@@ -211,53 +214,264 @@ export function highlightRelevantSlots() {
     });
 }
 
-export function filterChampionsBasedOnRoleBoxes() {
-    // Get all the stats outers in the stats section
-    const selectedRoles = getSelectedRoles()
-    const statsGrid = document.querySelectorAll('.stats-card-wrapper');
+export function filterChampionsBySelectedRoles() {
+    const statsCardWrappers = document.querySelectorAll('.stats-card-wrapper');
     const slotsSection = document.getElementById('slots-section');
     const slots = slotsSection.querySelectorAll('.slot');
 
     slots.forEach(slot => {
         // Check if slot exists and has children
         if (slot && slot.childElementCount > 0) {
-            // Find the role boxes container inside the slot
-            const roleBoxesContainer = slot.querySelector('.role-boxes-container');
+            // Find the role selector container for the slot
+            const slotRoleSelectorContainer = slot.previousElementSibling;
 
-            // Check if the role boxes container exists
-            if (roleBoxesContainer) {
-                // Iterate over each role box inside the container
-                roleBoxesContainer.querySelectorAll('.role-box').forEach(roleBox => {
-                    // Check if the role box is fully opaque (selected)
-                    if (roleBox.style.opacity === '1') {
-                        // Retrieve the role from the role box
-                        // Assuming role information is stored in a `data-role` attribute
-                        const role = roleBox.getAttribute('data-letter');
+            // Iterate over each role selectors inside the container
+            slotRoleSelectorContainer.querySelectorAll('.slot-role-selector').forEach(roleSelector => {
+                // Check if the role selector is fully opaque (selected)
+                if (roleSelector.style.opacity === '1') {
+                    // Retrieve the role from the role selector
+                    const role = roleSelector.getAttribute('data-letter-role');
 
-                        // Add the selected role using your custom function
-                        addSelectedRole(role);
-                    }
-                });
-            }
+                    // Add the selected role using your custom function
+                    addSelectedRole(role);
+                }
+            });
         }
     });
 
-    if (statsGrid) {
-        statsGrid.forEach(statsCardWrapper => {
-            // Filter stats outers based on the selected role
-            let showChampion = false;
+    const selectedRoles = getSelectedRoles()
 
-            // Iterate over the role boxes in the stats outer
-            statsCardWrapper.querySelectorAll('.stats-card .role-boxes-container .role-box').forEach(roleBox => {
-                // Check if any role doesn't match the selected roles
-                if (!selectedRoles.has(roleBox.getAttribute('data-letter'))) {
-                    showChampion = true;
+statsCardWrappers.forEach(statsCardWrapper => {
+        // Find the role boxes container and attempt to retrieve its data-letter-roles attribute
+        const roleBoxesContainer = statsCardWrapper.querySelector('.role-boxes-container');
+        const dataLetterRoles = roleBoxesContainer ? roleBoxesContainer.getAttribute('data-letter-roles') : '';
+
+        // Proceed only if dataLetterRoles is not null or empty
+        if (dataLetterRoles) {
+            // Parse the roles from data-letter-roles
+            const roles = new Set(dataLetterRoles.split(',').map(role => role.trim()));
+
+            // Check if all roles from data-letter-roles are in the selected roles
+            let allRolesMatch = roles.size > 0; // Assume all roles match only if there are any roles
+            roles.forEach(role => {
+                if (!selectedRoles.has(role)) {
+                    allRolesMatch = false;
                 }
             });
 
-            // Display or hide the stats outer based on the filter result
-            statsCardWrapper.style.display = showChampion ? 'flex' : 'none';
+            // Display or hide the stats card wrapper based on whether all roles match
+            const show = !allRolesMatch; // If not all roles match, we show the card
+            statsCardWrapper.style.display = show ? '' : 'none';
+            const statsCard = statsCardWrapper.querySelector('.stats-card');
+            statsCard.style.display = show ? '' : 'none';
+        } else {
+            // If no data-letter-roles attribute is found, default to showing the card
+            statsCardWrapper.style.display = '';
+            const statsCard = statsCardWrapper.querySelector('.stats-card');
+            statsCard.style.display = '';
+        }
+    });
+}
+
+export function loadMoreCard(championId){
+    const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${championId}"]`);
+    const champion = getChampionData(championId);
+    const goLeft = moreCard.querySelector('.go-left');
+    const goRight = moreCard.querySelector('.go-right');
+    const roleFrequencyContainer = moreCard.querySelector('.role-frequency-container')
+
+    const computedStyle = window.getComputedStyle(roleFrequencyContainer);
+    const containerWidth = parseFloat(computedStyle.width);
+    const containerHeight = parseFloat(computedStyle.height);
+
+    const pickTotal = champion.pick_total;
+
+    // Data preparation for the packed bubble chart
+    const data = champion.roles.map((frequency, index) => {
+        // Calculate size factor
+        const sizeFactor = frequency / pickTotal;
+
+        // Calculate size for each bubble
+        const size = (sizeFactor * containerHeight * 0.8) + 1; // Adjust to fill the container height
+
+        // Return an object with the size and index
+        return { value: size, index: index };
+    });
+
+    function createBubbleChart(roleFrequencyContainer, championData) {
+        // Get the container dimensions
+        const computedStyle = window.getComputedStyle(roleFrequencyContainer);
+        const containerWidth = parseFloat(computedStyle.width);
+        const containerHeight = parseFloat(computedStyle.height);
+
+        // Define colors
+        const colors = [
+            'rgba(232,58,58, 1)',
+            'rgba(60,138,60,1)',
+            'rgba(32,125,212, 1)',
+            'rgba(214,181,15, 1)',
+            'rgba(221,65,210,1)'
+        ];
+
+        // Prepare the size data and map original indices to colors
+        const data = championData.roles.map((frequency, index) => {
+            return {
+                frequency, // Keep the original pick_total
+                index, // Original index
+                color: colors[index] // Map original index to color
+            };
         });
+
+        // Use a square root scale to control the size of the circles
+        const radiusScale = d3.scaleSqrt()
+            .domain([0, d3.max(data, d => d.frequency)]) // Range of frequencies
+            .range([containerHeight / 50, containerHeight / 3]); // Desired range of radii
+
+        // Convert the data into nodes format for the force layout
+        const nodes = data.map(d => ({
+            index: d.index,
+            radius: radiusScale(d.frequency), // Apply square root scaling to the radius
+            color: d.color, // Keep the color mapping
+            x: Math.random() * containerWidth,
+            y: Math.random() * containerHeight,
+        }))
+
+        // Sort nodes by radius
+        nodes.sort((a, b) => b.radius - a.radius);
+
+        // Create the SVG element
+        const svg = d3.select(roleFrequencyContainer)
+            .append("svg")
+            // Set viewBox to match the container size
+            .attr("viewBox", `0 0 ${containerWidth} ${containerHeight}`)
+            // Use relative dimensions for width and height
+            .attr("width", '100%')
+            .attr("height", '100%')
+            .attr("shape-rendering", "geometricPrecision");
+
+        // Create circles and bind data
+        const circles = svg.selectAll("circle")
+            .data(nodes)
+            .enter()
+            .append("circle")
+            .attr("r", d => d.radius)
+            .style("fill", d => d.color) // Use the color from the data to maintain role order
+            .style("stroke", "rgb(0,0,0)")
+            .attr("shape-rendering", "geometricPrecision")
+            .style("stroke-width", containerWidth/150);
+
+        // Create the force simulation
+        const simulation = d3.forceSimulation(nodes)
+            .force("center", d3.forceCenter(containerWidth / 2, containerHeight / 2))
+            .force("collision", d3.forceCollide().radius(d => d.radius).strength(0.9)) // High collision strength
+            .force("x", d3.forceX(containerWidth / 2).strength(0.01))
+            .force("y", d3.forceY(containerHeight / 2).strength(0.01))
+            .velocityDecay(0.9)
+            .alphaDecay(0.001)
+            .on("tick", ticked);
+
+        function ticked() {
+            circles
+                .attr("cx", d => Math.max(d.radius + containerWidth/100, Math.min(containerWidth - d.radius - containerWidth/100, d.x)))
+                .attr("cy", d => Math.max(d.radius + containerWidth/100, Math.min(containerHeight - d.radius - containerWidth/100, d.y)));
+        }
+
+        // Set a timeout to stop the simulation after 30 seconds
+        setTimeout(() => {
+            simulation.stop();
+        }, 30000);
+
+        // Initialize the simulation
+        simulation.restart();
+    }
+    createBubbleChart(roleFrequencyContainer, champion);
+
+
+    const transactionData = getTransactionData()
+    const transactionsByRole = transactionData[1].transactions
+    const championName = champion.name;
+
+    // Function to find the most recent game with the specified championName
+    function findRecentGame(transactions, championName) {
+        for (let i = 0; i < transactions.length; i++) {
+            const gameData = transactions[i];
+            if (gameData.includes(championName)) {
+                // Return the first 10 strings in the gameData list
+                return gameData.slice(0, 10);
+            }
+        }
+        // If no game is found with the championName, return an empty list
+        return [];
     }
 
+    const leftGameContainer = moreCard.querySelector('.left-game-container');
+    const rightGameContainer = moreCard.querySelector('.right-game-container');
+
+    // Find the most recent game involving the specified championName
+    const recentGame = findRecentGame(transactionsByRole, championName);
+    const smallImageContainers = moreCard.querySelectorAll('.small-image-container');
+
+    // Ensure we have enough image containers for each champion (or adjust this logic as necessary)
+    if (smallImageContainers.length < recentGame.length) {
+        console.error('Not enough image containers for the number of champions in recent games.');
+        return; // Exit if not enough containers
+    }
+
+    recentGame.forEach((championName, index) => {
+        const recentChampion = getChampionDataByName(championName);
+        const smallImageUrl = recentChampion.imageUrl;
+
+        const smallImage = document.createElement('img');
+        smallImage.src = smallImageUrl;
+        smallImage.alt = `${championName} image`;
+        smallImage.style.width = "4vh";
+        smallImage.style.height = "4vh";
+
+        // Append the image to the corresponding container by index
+        if (smallImageContainers[index]) {
+            smallImageContainers[index].appendChild(smallImage);
+        }
+
+        if (index > 4){
+            leftGameContainer.appendChild(smallImageContainers[index]);
+        } else {
+            rightGameContainer.appendChild(smallImageContainers[index]);
+        }
+    });
+    const svgElement4 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const useElement4 = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    useElement4.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#arrow-left`);
+    svgElement4.appendChild(useElement4);
+
+    goLeft.appendChild(svgElement4);
+
+    const svgElement5 = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    const useElement5 = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    useElement5.setAttributeNS('http://www.w3.org/1999/xlink', 'href', `#arrow-right`);
+    svgElement5.appendChild(useElement5);
+
+    goRight.appendChild(svgElement5);
+
+    const splashArt = moreCard.querySelector('.splash-art');
+    splashArt.setAttribute('src', `/static/images/splashArt/${championId}.webp`);
+
+    const moreCardBackground = document.querySelector(`#more-cards-section .more-card-background[data-id="${championId}"]`);
+
+    // Set the background image from local static files
+    const encodedChampionName = encodeURIComponent(championName).replace(/'/g, "%27");
+    moreCardBackground.style.backgroundImage = `url('${window.location.origin}/static/images/cardBGs/${encodedChampionName}.webp')`;
+    moreCardBackground.style.backgroundSize = 'cover';
+    moreCardBackground.style.backgroundPosition = 'center';
+
+    const blueShapes = moreCard.querySelectorAll('.blue-rectangle, .blue-square');
+    const redShapes = moreCard.querySelectorAll('.red-rectangle, .red-square');
+    const bluePicks = champion.blue.picks;
+    const redPicks = champion.red.picks;
+
+    blueShapes.forEach((shape, index) => {
+        shape.textContent = bluePicks[index];
+    })
+    redShapes.forEach((shape, index) => {
+        shape.textContent = redPicks[index];
+    })
 }

@@ -1,77 +1,228 @@
 {% extends 'base.html' %}
 
 {% block head %}
-    <title>Task Tactics</title>
+    <title></title>
 {% endblock %}
 
 {% block body %}
     <div class="content">
-        <!-- Data View Selector -->
-        <div id="data-view-selector-container">
-            <div class="toggle-switch">
-                <input type="checkbox" id="data-view-toggle">
-                <label for="data-view-toggle"></label>
+        <!-- Flex Container -->
+        <div id="flex-container" class="flex-container">
+            <!-- Champion Slots Section -->
+            <div id="slots-section" class="slots-section">
+                {% for slot_id in range(1, 6) %}
+                    <div class="slot-container">
+                        <div class="slot-role-selector-container" style="display: none">
+                            <div class="slot-role-selector top-selector" data-letter-role="t"><span>Top</span></div>
+                            <div class="slot-role-selector jungle-selector" data-letter-role="j"><span>Jungle</span></div>
+                            <div class="slot-role-selector mid-selector" data-letter-role="m"><span>Mid</span></div>
+                            <div class="slot-role-selector bot-selector" data-letter-role="b"><span>Bot</span></div>
+                            <div class="slot-role-selector support-selector" data-letter-role="s"><span>Support</span></div>
+                        </div>
+                        <div class="slot" id="slot_{{ slot_id }}"></div>
+                        <div class="hover-tab"></div>
+                    </div>
+                {% endfor %}
             </div>
-        </div>
-    <!-- Champion Slots and Elements Section -->
-    <div id="flex-container" class="flex-container">
-        <!-- Champion Slots Section -->
-        <div id="slots-section" class="slots-section">
-            {% for slot_id in range(1, 6) %}
-                <div class="slot" id="slot_{{ slot_id }}"></div>
-            {% endfor %}
-        </div>
-
-        <!-- Stats Section -->
-        <div id="stats-section">
-            <div id="stats-grid">
-                <div id="stats-card-wrapper">
-                    <div class="stats-card">
-                        <div class="role-boxes-container">
-                            <!-- Role boxes go here -->
-                        </div>
-                        <div class="image-container">
-                            <!-- Image container content goes here -->
-                        </div>
-                        <div class='bar-container'>
-                            <!-- Bar container content goes here -->
+            <!-- Stats Section -->
+            <div id="stats-section">
+                <div id="header-container">
+                    <!-- Data View Selector -->
+                    <div id="data-view-selector-container">
+                        <div class="data-view-toggle-wrapper">
+                            <label for="data-view-toggle-wrapper"> SIDE </label>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="data-view-toggle">
+                                <label for="data-view-toggle"></label>
+                            </div>
                         </div>
                     </div>
-                    <!-- More stats cards-->
+                    <h2> Champion Cards </h2>
+                    <!-- Search Bar -->
+                    <div id="search-container">
+                        <label for="champion-search-bar"></label>
+                        <input type="text" id="champion-search-bar" placeholder="Search champion cards..." />
+                    </div>
+                </div>
+                <div id="stats-grid">
+                    {% for champion in champions %}
+                        <div class="stats-card-wrapper" data-id="{{ champion.id }}">
+                            <div class="role-boxes-container">
+                                    <div class="role-box"></div>
+                                    <div class="role-box"></div>
+                                    <div class="role-box"></div>
+                                    <div class="role-box"></div>
+                                    <div class="role-box"></div>
+                            </div>
+                            <div class="stats-card" data-id="{{ champion.id }}">
+                                <div class="image-container">
+                                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion.id }}.png"
+                                         alt="Champion Image" class="champion-img" data-id="{{ champion.id }}">
+                                </div>
+                                <div class="bar-container">
+                                    <div class="bar"></div>
+                                </div>
+                                <div class="number-display"></div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <!-- Sideboard -->
+                <h3> Sideboard </h3>
+                <h4> (These cards have been played, but not in this order)</h4>
+                <div id="sideboard">
+                    <!-- Stats cards-->
+                </div>
+                <!-- Commons -->
+                <h3>Commons</h3>
+                <h4> (No data)</h4>
+                <div id="commons">
+                    <!-- Stats cards-->
                 </div>
             </div>
-        </div>
-
-        <!-- Champions List -->
-        <div id="champions-section">
-            <!-- Search Bar -->
-            <label for="champion-search-bar"></label>
-            <input type="text" id="champion-search-bar" placeholder="Search champions..." />
-
-            <div id="champions-list">
+            <!-- More Stats -->
+            <div id="more-cards-section">
                 {% for champion in champions %}
-                    <img src="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion.id }}.png"
-                         alt="Champion Image" class="champion" data-id="{{ champion.id }}">
+                    <div class="more-card-background" data-id="{{ champion.id }}" style="display: none"> </div>
+                    <div class="more-card" data-id="{{ champion.id }}" style="display: none">
+                        <!-- Header -->
+                        <div class="header">
+                            <div class="champ-name">
+                                <p>{{ champion.name }}</p>
+                            </div>
+                            <div class="pb-section">
+                                <div class="pb-container">
+                                    <p>Picks</p>
+                                    <p>{{ champion.pick_total }}</p>
+                                </div>
+                                <div class="pb-container">
+                                    <p>Bans</p>
+                                    <p>{{ champion.ban_total }}</p>
+                                </div>
+                                <div class="pb-container pb-pct">
+                                    <p>PB</p>
+                                    <p>{{ champion.pb_pct }}%</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Splash art -->
+                        <div class="splash-art-container" >
+                            <img src="" alt="{{ champion.name }}" class="splash-art">
+                        </div>
+
+                        <!-- Navigator -->
+                        <div class="navigator">
+                            <div class="go-left">
+                                <p>Q</p>
+                            </div>
+                            <div class="pages">
+                                <div class="page-1">
+                                    <p>Overview</p>
+                                </div>
+                                <div class="page-2">
+                                    <p>Rules</p>
+                                </div>
+                            </div>
+                            <div class="go-right">
+                                <p>E</p>
+                            </div>
+                        </div>
+                        <!-- Frequency Section -->
+                        <div class="frequency-section">
+                            <!-- Pick Frequency Section -->
+                            <div class="pick-frequency-section">
+                                <div class="frequency-title-container">
+                                    <p class="frequency-title">Pick Order</p>
+                                </div>
+                                <div class="picks-container">
+                                    <!-- Blue Container -->
+                                    <div class="blue-container">
+                                        <div class="blue-square">1</div>
+                                        <div class="blue-rectangle">2</div>
+                                        <div class="blue-rectangle-2">3</div>
+                                    </div>
+
+                                    <!-- Red Container -->
+                                    <div class="red-container">
+                                        <div class="red-rectangle">4</div>
+                                        <div class="red-square">5</div>
+                                        <div class="red-square">6</div>
+                                        <div class="red-square">7</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Role Frequency Section -->
+                            <div class="role-frequency-section">
+                                <!-- Title container -->
+                                <div class="frequency-title-container">
+                                    <span class="frequency-title">In-Game Role</span>
+                                </div>
+                                <!-- Role pick_total list -->
+                                <div class="role-frequency-container">
+                                </div>
+                            </div>
+                            <!-- Recent Game Section -->
+                            <div class="recent-game-section">
+                                <div class="frequency-title-container">
+                                    <p class="frequency-title">Recent Game</p>
+                                </div>
+                                <div class="game-container">
+                                    <div class="left-game-container">
+                                        <!-- Small image container and small images here -->
+                                        <div class="small-image-container"></div>
+                                        <div class="small-image-container"></div>
+                                        <div class="small-image-container"></div>
+                                        <div class="small-image-container"></div>
+                                        <div class="small-image-container"></div>
+                                    </div>
+                                    <div class="right-game-container">
+                                        <!-- Small image containers and small images here -->
+                                        <div class="small-image-container"></div>
+                                        <div class="small-image-container"></div>
+                                        <div class="small-image-container"></div>
+                                        <div class="small-image-container"></div>
+                                        <div class="small-image-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Footer -->
+                        <div class="footer">
+                            <div class="foot-note">
+                                <p>Based on the last {{ cached_transactions[0].total }} games from LCK, LCS, LEC, LPL, MSI, Worlds, LCK CL</p>
+                            </div>
+                        </div>
+                    </div>
                 {% endfor %}
             </div>
         </div>
     </div>
-
-        <!-- Data Storage -->
-        <div id="data-storage-section" style="display: none;">
-            {% for champion in champions %}
-                <div class="champion-data"
-                     data-id="{{ champion.id }}"
-                     data-name="{{ champion.name }}"
-                     data-blue-picks="{{ champion.blue_picks | tojson }}"
-                     data-blue-bans="{{ champion.blue_bans | tojson }}"
-                     data-red-picks="{{ champion.red_picks | tojson }}"
-                     data-red-bans="{{ champion.red_bans | tojson }}"
-                     data-roles="{{ champion.roles | tojson }}"
-                     data-image-url="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion.id }}.png">
-                </div>
-            {% endfor %}
-        </div>
+    <!-- Data Storage -->
+    <div id="data-storage-section" style="display: none;">
+        {% for champion in champions %}
+            <div class="champion-data"
+                data-id="{{ champion.id }}"
+                data-name="{{ champion.name }}"
+                data-blue-picks="{{ champion.blue_picks | tojson }}"
+                data-blue-bans="{{ champion.blue_bans | tojson }}"
+                data-red-picks="{{ champion.red_picks | tojson }}"
+                data-red-bans="{{ champion.red_bans | tojson }}"
+                data-roles="{{ champion.roles | tojson }}"
+                data-relevance="{{ champion.relevance }}"
+                data-pick_total="{{ champion.pick_total }}"
+                data-ban_total="{{ champion.ban_total }}"
+                data-pb_pct="{{ champion.pb_pct }}"
+                data-image-url="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion.id }}.png">
+            </div>
+        {% endfor %}
+        {% for cached_transaction in cached_transactions %}
+            <div class="cached-transaction-data"
+                data-id="{{ cached_transaction.id }}"
+                data-transactions="{{ cached_transaction.transactions }}"
+                data-total="{{ cached_transaction.total }}">
+            </div>
+        {% endfor %}
     </div>
 {% endblock %}
 

@@ -4,6 +4,9 @@ import {
     handleChampionClick,
     handleSearchFocus,
     handleSearchBlur,
+    handleChampionMouseEnter,
+    handleChampionMouseLeave,
+    handleSlotRoleSelectorClick
 } from './eventHandlers.js';
 
 import {
@@ -14,31 +17,36 @@ import {
 import {
     setDataView,
     loadChampionData,
+    loadTransactionData
 } from './state.js';
 
-// Initialization function
 export default function initialize() {
-    // Initial setup
     // Load the DOM elements
+    // Initialize the application state
+    setDataView('blue');
+    loadChampionData()
+    loadTransactionData()
+    displayRelevantData('blue', true); // Display data based on default state
+    highlightRelevantSlots(); // Highlight relevant slots in the UI
+
     const dataViewToggle = document.getElementById('data-view-toggle');
     const championSearchBar = document.getElementById('champion-search-bar');
-    const champions = document.querySelectorAll('.champion');
+    const statsCards = document.querySelectorAll('.stats-card');
+    const slotRoleSelectors = document.querySelectorAll('.slot-role-selector');
 
     // Register event listeners
+    slotRoleSelectors.forEach(slotRoleSelector => {
+        slotRoleSelector.addEventListener('click', handleSlotRoleSelectorClick);
+    })
     dataViewToggle.addEventListener('click', handleToggleClick);
     championSearchBar.addEventListener('input', handleSearchInput);
     championSearchBar.addEventListener('focus', handleSearchFocus);
     championSearchBar.addEventListener('blur', handleSearchBlur);
-    champions.forEach(champion => {
-        champion.addEventListener('click', handleChampionClick);
+    statsCards.forEach(statsCard => {
+        statsCard.addEventListener('click', handleChampionClick);
+        statsCard.addEventListener('mouseover', handleChampionMouseEnter);
+        statsCard.addEventListener('mouseout', handleChampionMouseLeave);
     });
-
-    // Initialize the application state
-    setDataView('blue');
-    loadChampionData()
-
-    displayRelevantData('blue'); // Display data based on default state
-    highlightRelevantSlots(); // Highlight relevant slots in the UI
 }
 
 // Listen for DOMContentLoaded event to start the initialization
