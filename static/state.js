@@ -1,34 +1,60 @@
 
 let state = {
-    dataView: 'blue', // Initialize dataView state to 'blue' by default
+    dataView: 'blue', // Initialize dataView state to blue by default
 };
 
 const dataStorageSection = document.getElementById('data-storage-section');
-let championElements = dataStorageSection.querySelectorAll('.champion-data');
-let championData = [];
+const htmlChampionData = dataStorageSection.querySelectorAll('.champion-data');
+const htmlCachedTransactions = dataStorageSection.querySelectorAll('.cached-transaction-data');
 const slots = document.querySelectorAll('.slot');
-let slotRoleBoxState = {}; // Object to track lit role box state for each slot
+let slotRoleSelectorState = {}; // Object to track lit role selector state for each slot
 const selectedRoles = new Set([])
+let championData = {}
+let allChampionData = []
+let transactionData = {}
 
+export function loadTransactionData() {
+    // Iterate through each transactions in data storage section
+    htmlCachedTransactions.forEach((cachedTransaction, index) => {
+        try {
+            const transactions = JSON.parse(cachedTransaction.dataset.transactions);
 
+            // Construct data object for the transactions
+            transactionData[cachedTransaction.dataset.id] = {
+                id: cachedTransaction.dataset.id,
+                transactions: transactions,
+            }
+        } catch (error) {
+            console.error(`Error parsing data for transactions at index ${index}:`, error);
+        }
+    });
+}
+
+export function getTransactionData() {
+    return transactionData;
+}
 
 export function loadChampionData() {
     // Iterate through each champion element in data storage section
-    championElements.forEach((element, index) => {
+    htmlChampionData.forEach((champion, index) => {
         try {
-            // Parse blue and red data from the element's data attributes
-            const bluePicks = JSON.parse(element.dataset.bluePicks);
-            const blueBans = JSON.parse(element.dataset.blueBans);
-            const redPicks = JSON.parse(element.dataset.redPicks);
-            const redBans = JSON.parse(element.dataset.redBans);
-            const roles = JSON.parse(element.dataset.roles);
+            // Parse blue and red data from the champion's data attributes
+            const bluePicks = JSON.parse(champion.dataset.bluePicks);
+            const blueBans = JSON.parse(champion.dataset.blueBans);
+            const redPicks = JSON.parse(champion.dataset.redPicks);
+            const redBans = JSON.parse(champion.dataset.redBans);
+            const roles = JSON.parse(champion.dataset.roles);
+            const pick_total = parseInt(champion.dataset.pick_total, 10);
+            const relevance = parseInt(champion.dataset.relevance, 10);
 
             // Construct data object for the champion
             const data = {
-                id: element.dataset.id,
-                name: element.dataset.name,
-                imageUrl: element.dataset.imageUrl,
+                id: champion.dataset.id,
+                name: champion.dataset.name,
+                imageUrl: champion.dataset.imageUrl,
                 roles: roles,
+                relevance: relevance,
+                pick_total: pick_total,
                 // Store parsed blue and red picks and bans in the data object
                 blue: {
                     picks: bluePicks,
@@ -39,30 +65,41 @@ export function loadChampionData() {
                     bans: redBans
                 }
             };
-            championData.push(data);
+            allChampionData.push(data)
+            championData[champion.dataset.id] = data
         } catch (error) {
             console.error(`Error parsing data for champion at index ${index}:`, error);
         }
     });
-
-// Log the retrieved data for debugging purposes
-console.log('Retrieved champions data:', championData);
-setChampionData(championData)
-setChampionElements(championElements)
-}
-export function setChampionData(newData) {
-    championData = newData;
-}
-export function getChampionElements() {
-    return championElements
 }
 
-export function getChampionData() {
-    return championData
+export function getChampionHtmlData() {
+    return htmlChampionData
 }
 
-export function setChampionElements(newData) {
-    championElements = newData;
+export function getAllChampionData() {
+    return allChampionData
+}
+
+export function getChampionData(championId) {
+    return championData[championId];
+}
+
+export function getChampionDataByName(championName) {
+    // Iterate through each champion data in allChampionData
+    for (let i = 0; i < allChampionData.length; i++) {
+        // Get the current champion data
+        const champion = allChampionData[i];
+
+        // Check if the name of the current champion data matches the provided name
+        if (champion.name === championName) {
+            // Return the champion data if there is a match
+            return champion;
+        }
+    }
+
+    // Return null or undefined if no matching champion name is found
+    return null;
 }
 
 
@@ -147,14 +184,14 @@ export function getRelevantSlots(dataView) {
     return relevantSlots;
 }
 
-// Function to set the state of a lit role box for a given slot
-export function setLitRoleBox(slotId, role) {
-    slotRoleBoxState[slotId] = role;
+// Function to set the state of a lit role selector for a given slot
+export function setLitSlotRoleSelector(slotId, role) {
+    slotRoleSelectorState[slotId] = role;
 }
 
-// Function to get the state of a lit role box for a given slot
-export function getLitRoleBox(slotId) {
-    return slotRoleBoxState[slotId];
+// Function to get the state of a lit role selector for a given slot
+export function getLitSlotRoleSelector(slotId) {
+    return slotRoleSelectorState[slotId];
 }
 
 export function getSelectedRoles() {
