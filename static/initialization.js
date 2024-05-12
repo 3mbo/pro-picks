@@ -6,7 +6,8 @@ import {
     handleSearchBlur,
     handleChampionMouseEnter,
     handleChampionMouseLeave,
-    handleSlotRoleSelectorClick
+    handleSlotRoleSelectorClick,
+    handleKeyPress
 } from './eventHandlers.js';
 
 import {
@@ -17,7 +18,7 @@ import {
 import {
     setDataView,
     loadChampionData,
-    loadTransactionData
+    loadTransactionData,
 } from './state.js';
 
 export default function initialize() {
@@ -46,6 +47,10 @@ export default function initialize() {
         statsCard.addEventListener('click', handleChampionClick);
         statsCard.addEventListener('mouseover', handleChampionMouseEnter);
         statsCard.addEventListener('mouseout', handleChampionMouseLeave);
+    });
+    // Keyboard event listeners for flipping pages
+    document.addEventListener('keydown', event => {
+        handleKeyPress(event)
     });
 }
 

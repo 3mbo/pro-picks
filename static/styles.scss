@@ -545,8 +545,9 @@ body {
 
     /* Splash Art Container Styling */
     .splash-art-container {
-        width: 88%;; height: 44vh;
+        width: 88%;; height: 29vh;
         overflow: hidden;
+        margin-bottom: 4vh;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -575,6 +576,8 @@ body {
     /* Navigator */
     .navigator {
         display: flex;
+        position: absolute;
+        top: 38vh;
         justify-content: center;
         align-items: center;
         height: 4vh;
@@ -582,6 +585,7 @@ body {
         text-shadow:
             0.2vh 0.2vh 0.8vh rgba(0, 0, 0, 0.7),   /* Closer, darker shadow for depth */
             1vh 1vh 3vh rgba(0, 0, 0, 1);   /* Larger, more blurred shadow for a glow effect */
+
         .go-left {
             display: flex;
             flex-direction: row;
@@ -598,8 +602,9 @@ body {
             flex: 0 0 auto;
         }
 
-        .pages {
+        .page-container {
             display: flex;
+            flex-direction: row;
             justify-content: center;
             align-items: center;
             gap: 1vh;
@@ -611,7 +616,6 @@ body {
     .frequency-section {
         display: flex;
         justify-content: center;
-        align-items: center;
         height: 34vh;
         width: 88%;
         margin-left: 6%;
@@ -644,7 +648,7 @@ body {
         /* Role Frequencies */
         .role-frequency-section {
             width: 24vh;
-            height: 34vh;
+            height: 30vh;
             align-items: center;
             display: flex;
             flex: 0 0 auto;
@@ -798,9 +802,38 @@ body {
         }
     }
 
+    .rules-section {
+        height: 100%; width: 100%;
+        display: none;
+        flex-direction: column;
+        margin-left: 6%;
+        margin-right: 6%;
+        justify-content: start;
+        align-items: center;
+
+        .rules-single-container {
+            height: 29vh;
+            width: 88%;
+            margin-bottom: 4vh;
+            text-align: center;
+            border: solid rgba(136, 114, 73, 0.6) 0.2vh;
+            border-radius: 1vh;
+            background-color: rgba(3, 14, 28, 0.4);
+        }
+        .rules-multi-container {
+            height: 34vh;
+            width: 88%;
+            text-align: center;
+            border: solid rgba(136, 114, 73, 0.6) 0.2vh;
+            border-radius: 1vh;
+            background-color: rgba(3, 14, 28, 0.4);
+        }
+    }
+
     /* Footer */
     .footer {
         display: flex;
+        flex: 0.1;
         justify-content: space-between;
         width: 100%;
         height: 5vh;

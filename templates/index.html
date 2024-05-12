@@ -116,11 +116,14 @@
                             <div class="go-left">
                                 <p>Q</p>
                             </div>
-                            <div class="pages">
-                                <div class="page-1">
+                            <div class="page-container">
+                                <div class="page">
+                                    <p>Art</p>
+                                </div>
+                                <div class="page">
                                     <p>Overview</p>
                                 </div>
-                                <div class="page-2">
+                                <div class="page">
                                     <p>Rules</p>
                                 </div>
                             </div>
@@ -187,10 +190,14 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="rules-section">
+                            <div class="rules-single-container">This is where the single rules will go</div>
+                            <div class="rules-multi-container">This is where the multi rules will go</div>
+                        </div>
                         <!-- Footer -->
                         <div class="footer">
                             <div class="foot-note">
-                                <p>Based on the last {{ cached_transactions[0].total }} games from LCK, LCS, LEC, LPL, MSI, Worlds, LCK CL</p>
+                                <p>Based on the last {{ cached_transactions[0].total }} games from LCK, LCS, LEC, LPL, MSI, Worlds, LCK CL.</p>
                             </div>
                         </div>
                     </div>

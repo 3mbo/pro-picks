@@ -1,13 +1,4 @@
-from datetime import datetime
 from database import db
-
-
-# Define models
-class MyTask(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.Text)
-    completed = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Champion(db.Model):

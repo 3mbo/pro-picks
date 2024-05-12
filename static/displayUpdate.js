@@ -2,7 +2,7 @@ import {
     addSelectedRole,
     getAllChampionData,
     getChampionData,
-    getChampionDataByName,
+    getChampionDataByName, getCurrentDisplayedCardId,
     getDataView,
     getRelevantSlots,
     getSelectedRoles,
@@ -474,4 +474,61 @@ export function loadMoreCard(championId){
     redShapes.forEach((shape, index) => {
         shape.textContent = redPicks[index];
     })
+}
+
+export function updateNavigator(navigator, newPageNumber) {
+    const pages = navigator.querySelectorAll('.page')
+    const totalPages = pages.length;
+    const nextLeft = (newPageNumber - 1 + totalPages) % totalPages;
+    const nextRight = (newPageNumber + 1) % totalPages;
+
+    // Update classes for CSS styling
+    pages.forEach((page, index) => {
+        if (index === newPageNumber) {
+            page.className = 'current';
+        } else if (index === nextLeft) {
+            page.className = 'left';
+        } else if (index === nextRight) {
+            page.className = 'right';
+        } else {
+            page.className = 'page';
+        }
+    });
+}
+
+export function updatePage(pageNumber) {
+    const currentDisplayedCardId = getCurrentDisplayedCardId();
+    const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${currentDisplayedCardId}"]`);
+    const frequencySection = moreCard.querySelector('.frequency-section')
+    const splashArtContainer = moreCard.querySelector('.splash-art-container')
+    const rulesSection = moreCard.querySelector('.rules-section')
+    const navigator = moreCard.querySelector('.navigator');
+
+    updateNavigator(navigator, pageNumber); // Update navigator appearance based on new page number
+
+    if (pageNumber === 0) {
+        // Background page
+        console.log('page0')
+        moreCard.style.display = 'none';
+        navigator.style.display = 'flex'
+    }
+    if (pageNumber === 1) {
+        // Overview page
+        console.log('page1')
+        rulesSection.style.display = 'none'
+
+        frequencySection.style.display = 'flex';
+        splashArtContainer.style.display = 'flex';
+        moreCard.style.display = '';
+    }
+    if (pageNumber === 2) {
+        // Rules page
+        console.log('page2')
+        moreCard.style.display = ''
+        frequencySection.style.display = 'none';
+        splashArtContainer.style.display = 'none';
+
+        rulesSection.style.display = 'flex';
+        navigator.style.display= '';
+    }
 }

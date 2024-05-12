@@ -7,14 +7,21 @@ import {
     clearSelectedRoles,
     setDataView,
     setLitSlotRoleSelector,
-    getLitSlotRoleSelector
+    getLitSlotRoleSelector,
+    getLoaded,
+    addLoaded,
+    getCurrentDisplayedCardId,
+    setCurrentDisplayedCardId,
+    getPageNumber,
+    setPageNumber
 } from './state.js';
 
 import {
     displayRelevantData,
     filterChampionsBySelectedRoles,
     highlightRelevantSlots,
-    loadMoreCard
+    loadMoreCard,
+    updatePage
 } from './displayUpdate.js';
 
 // Event handler for the champion click
@@ -112,26 +119,6 @@ export function handleSlotChampionClick(champion) {
 }
 
 let hoverTimeout; // Variable to store the timeout for the hover delay
-const loaded = new Set([])
-let currentDisplayedCardId = null; // Variable to track the ID of the currently displayed card
-
-// Keyboard event listeners for flipping pages
-document.addEventListener('keydown', event => {
-    if (currentDisplayedCardId) {
-        const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${currentDisplayedCardId}"]`);
-        const moreCardBackground = document.querySelector(`#more-cards-section .more-card-background[data-id="${currentDisplayedCardId}"]`);
-
-        if (event.key === 'q' || event.key === 'Q') {
-            // Display only the more card background (left page)
-            if (moreCardBackground) moreCardBackground.style.display = 'flex';
-            if (moreCard) moreCard.style.display = 'none';
-        } else if (event.key === 'e' || event.key === 'E') {
-            // Display both the more card and its background (right page)
-            if (moreCardBackground) moreCardBackground.style.display = 'flex';
-            if (moreCard) moreCard.style.display = '';
-        }
-    }
-});
 
 // Handle mouse enter event
 export function handleChampionMouseEnter(event) {
@@ -141,6 +128,7 @@ export function handleChampionMouseEnter(event) {
     }
 
     const championId = champion.dataset.id;
+    const currentDisplayedCardId = getCurrentDisplayedCardId()
     clearTimeout(hoverTimeout);
 
     hoverTimeout = setTimeout(() => {
@@ -164,6 +152,7 @@ export function handleChampionMouseLeave(event) {
 }
 
 function hideCurrentDisplayedCard() {
+    const currentDisplayedCardId = getCurrentDisplayedCardId()
     if (currentDisplayedCardId) {
         const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${currentDisplayedCardId}"]`);
         const moreCardBackground = document.querySelector(`#more-cards-section .more-card-background[data-id="${currentDisplayedCardId}"]`);
@@ -175,13 +164,13 @@ function hideCurrentDisplayedCard() {
 function displayMoreCard(championId) {
     const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${championId}"]`);
     const moreCardBackground = document.querySelector(`#more-cards-section .more-card-background[data-id="${championId}"]`);
-    if (!loaded.has(championId)) {
+    if (!getLoaded().has(championId)) {
         loadMoreCard(championId);
-        loaded.add(championId);
+        addLoaded(championId);
     }
     moreCardBackground.style.display = 'flex';
     moreCard.style.display = '';
-    currentDisplayedCardId = championId; // Update currently displayed card ID
+    setCurrentDisplayedCardId(championId); // Update currently displayed card ID
 }
 
 export function handleSearchInput() {
@@ -306,5 +295,22 @@ export function updateContainerPosition(slotContainer) {
     } else {
         slotRoleSelectorContainer.classList.remove('partially-hidden');
         hoverTab.classList.remove('partially-hidden');
+    }
+}
+
+export function handleKeyPress(event) {
+    if (getCurrentDisplayedCardId()) {
+        const pageNumber = getPageNumber()
+        const totalPages = 3
+
+        if (event.key === 'q' || event.key === 'Q') {
+            const newPageNumber = (pageNumber - 1 + totalPages) % totalPages
+            setPageNumber(newPageNumber)
+            updatePage(newPageNumber)
+        } else if (event.key === 'e' || event.key === 'E') {
+            const newPageNumber = (pageNumber + 1) % totalPages
+            setPageNumber(newPageNumber)
+            updatePage(newPageNumber)
+        }
     }
 }

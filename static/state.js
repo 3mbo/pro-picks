@@ -13,6 +13,34 @@ let championData = {}
 let allChampionData = []
 let transactionData = {}
 
+const loaded = new Set([])
+let currentDisplayedCardId = null; // Variable to track the ID of the currently displayed card
+let pageNumber = 1
+
+export function getPageNumber() {
+    return pageNumber
+}
+
+export function setPageNumber(newNumber) {
+    pageNumber = newNumber
+}
+
+export function getCurrentDisplayedCardId() {
+    return currentDisplayedCardId
+}
+
+export function setCurrentDisplayedCardId(championId) {
+    currentDisplayedCardId = championId
+}
+
+export function getLoaded() {
+    return loaded
+}
+
+export function addLoaded(championId) {
+    loaded.add(championId)
+}
+
 export function loadTransactionData() {
     // Iterate through each transactions in data storage section
     htmlCachedTransactions.forEach((cachedTransaction, index) => {
