@@ -67,7 +67,7 @@ def get_top_allies_and_enemies(champion, ranked_allies, ranked_enemies):
 
 
 def store_ally_enemy():
-    cached_role = db.session.get(CachedTransactions, 1)
+    cached_role = CachedTransactions.query.get(1)
     transactions = json.loads(cached_role.transactions)
 
     games = [

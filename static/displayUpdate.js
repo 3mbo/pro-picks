@@ -293,6 +293,7 @@ function loadAlliesEnemies(container, AEStats) {
     // Sort the stats by frequency in descending order
     AEStats.sort((a, b) => b[1] - a[1]);
     const AEWrappers = container.querySelectorAll('.ae-wrapper')
+    console.log(AEWrappers)
 
     AEWrappers.forEach((AEWrapper, index) => {
         if (!AEStats[index]) {
@@ -344,7 +345,7 @@ export function loadMoreCard(championId){
     const recentGame = findRecentGame(transactionsByRole, championName);
     const smallImageContainers = moreCard.querySelectorAll('.small-image-container');
 
-    // Ensure we have enough image containers for each champion (
+    // Ensure we have enough image containers for each champion (or adjust this logic as necessary)
     if (smallImageContainers.length < recentGame.length) {
         console.error('Not enough image containers for the number of champions in recent games.');
         return; // Exit if not enough containers
@@ -395,7 +396,7 @@ export function loadMoreCard(championId){
 
     const moreCardBackground = document.querySelector(`#more-cards-section .more-card-background[data-id="${championId}"]`);
 
-    // Set the background image from local asset files
+    // Set the background image from local static files
     const encodedChampionName = encodeURIComponent(championName).replace(/'/g, "%27");
     moreCardBackground.style.backgroundImage = `url('${window.location.origin}/static/images/cardBGs/${encodedChampionName}.webp')`;
     moreCardBackground.style.backgroundSize = 'cover';
