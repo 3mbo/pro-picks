@@ -1,6 +1,6 @@
 # Project Title
 
-One Paragraph of project description goes here
+A webapp to fetch and display data from League of Legends pro matches with a special emphasis on pick order.
 
 ## Getting Started
 
