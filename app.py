@@ -4,7 +4,9 @@ import logging
 
 from database import initialize_database
 from models import Champion, Slot, CachedTransactions
-from data import (get_champion_data, further_analysis)
+from data import get_champion_data
+
+from frequent_ally_enemy import store_ally_enemy
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -22,7 +24,7 @@ def initialize_data():
             print("Initializing data...")
             get_champion_data()
             print("Initializing further analysis...")
-            further_analysis()
+            store_ally_enemy()
 
     except Exception as e:
         print(f"Error while initializing data: {e}")
@@ -42,4 +44,4 @@ def index():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

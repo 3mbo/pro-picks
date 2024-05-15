@@ -2,8 +2,10 @@ import {
     addSelectedRole,
     getAllChampionData,
     getChampionData,
-    getChampionDataByName, getCurrentDisplayedCardId,
+    getChampionDataByName,
+    getCurrentDisplayedCardId,
     getDataView,
+    getRelevantPhase,
     getRelevantSlots,
     getSelectedRoles,
     getTransactionData
@@ -273,6 +275,55 @@ statsCardWrappers.forEach(statsCardWrapper => {
     });
 }
 
+// Helper function to load champions page
+function loadChampionsPage(moreCard, champion) {
+    const AEGridAllies = moreCard.querySelector('.rules-allies-container .ae-grid');
+    const allyStats = champion.allies;
+    const AEGridEnemies = moreCard.querySelector('.rules-enemies-container .ae-grid');
+    const enemyStats = champion.enemies;
+
+    loadAlliesEnemies(AEGridAllies, allyStats);
+    loadAlliesEnemies(AEGridEnemies, enemyStats);
+
+}
+
+// Helper function for the champions page
+function loadAlliesEnemies(container, AEStats) {
+
+    // Sort the stats by frequency in descending order
+    AEStats.sort((a, b) => b[1] - a[1]);
+    const AEWrappers = container.querySelectorAll('.ae-wrapper')
+    console.log(AEWrappers)
+
+    AEWrappers.forEach((AEWrapper, index) => {
+        if (!AEStats[index]) {
+            return;
+        }
+        const championName = AEStats[index][0];
+        const frequency = AEStats[index][1];
+        const delta = AEStats[index][2]
+        const championData = getChampionDataByName(championName);
+
+        const smallImageContainer = AEWrapper.querySelector('.small-image-container')
+
+        const smallImage = document.createElement('img');
+        smallImage.src = championData.imageUrl;
+        smallImage.alt = `${championName} image`;
+
+        const frequencySpan = AEWrapper.querySelector('.info .frequency')
+        const deltaSpan = AEWrapper.querySelector('.info .delta')
+        let deltaText = delta >= 0 ? `+${delta}` : `${delta}`;
+        let deltaColor = delta >= 0 ? 'rgb(106,236,106)' : 'rgb(255,84,84)';
+
+        deltaSpan.innerHTML = `<span style="color:${deltaColor};">${deltaText}</span>`;
+        frequencySpan.textContent = frequency
+
+        smallImageContainer.appendChild(smallImage);
+
+    });
+}
+
+
 export function loadMoreCard(championId){
     const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${championId}"]`);
     const champion = getChampionData(championId);
@@ -280,129 +331,12 @@ export function loadMoreCard(championId){
     const goRight = moreCard.querySelector('.go-right');
     const roleFrequencyContainer = moreCard.querySelector('.role-frequency-container')
 
-    const computedStyle = window.getComputedStyle(roleFrequencyContainer);
-    const containerWidth = parseFloat(computedStyle.width);
-    const containerHeight = parseFloat(computedStyle.height);
-
-    const pickTotal = champion.pick_total;
-
-    // Data preparation for the packed bubble chart
-    const data = champion.roles.map((frequency, index) => {
-        // Calculate size factor
-        const sizeFactor = frequency / pickTotal;
-
-        // Calculate size for each bubble
-        const size = (sizeFactor * containerHeight * 0.8) + 1; // Adjust to fill the container height
-
-        // Return an object with the size and index
-        return { value: size, index: index };
-    });
-
-    function createBubbleChart(roleFrequencyContainer, championData) {
-        // Get the container dimensions
-        const computedStyle = window.getComputedStyle(roleFrequencyContainer);
-        const containerWidth = parseFloat(computedStyle.width);
-        const containerHeight = parseFloat(computedStyle.height);
-
-        // Define colors
-        const colors = [
-            'rgba(232,58,58, 1)',
-            'rgba(60,138,60,1)',
-            'rgba(32,125,212, 1)',
-            'rgba(214,181,15, 1)',
-            'rgba(221,65,210,1)'
-        ];
-
-        // Prepare the size data and map original indices to colors
-        const data = championData.roles.map((frequency, index) => {
-            return {
-                frequency, // Keep the original pick_total
-                index, // Original index
-                color: colors[index] // Map original index to color
-            };
-        });
-
-        // Use a square root scale to control the size of the circles
-        const radiusScale = d3.scaleSqrt()
-            .domain([0, d3.max(data, d => d.frequency)]) // Range of frequencies
-            .range([containerHeight / 50, containerHeight / 3]); // Desired range of radii
-
-        // Convert the data into nodes format for the force layout
-        const nodes = data.map(d => ({
-            index: d.index,
-            radius: radiusScale(d.frequency), // Apply square root scaling to the radius
-            color: d.color, // Keep the color mapping
-            x: Math.random() * containerWidth,
-            y: Math.random() * containerHeight,
-        }))
-
-        // Sort nodes by radius
-        nodes.sort((a, b) => b.radius - a.radius);
-
-        // Create the SVG element
-        const svg = d3.select(roleFrequencyContainer)
-            .append("svg")
-            // Set viewBox to match the container size
-            .attr("viewBox", `0 0 ${containerWidth} ${containerHeight}`)
-            // Use relative dimensions for width and height
-            .attr("width", '100%')
-            .attr("height", '100%')
-            .attr("shape-rendering", "geometricPrecision");
-
-        // Create circles and bind data
-        const circles = svg.selectAll("circle")
-            .data(nodes)
-            .enter()
-            .append("circle")
-            .attr("r", d => d.radius)
-            .style("fill", d => d.color) // Use the color from the data to maintain role order
-            .style("stroke", "rgb(0,0,0)")
-            .attr("shape-rendering", "geometricPrecision")
-            .style("stroke-width", containerWidth/150);
-
-        // Create the force simulation
-        const simulation = d3.forceSimulation(nodes)
-            .force("center", d3.forceCenter(containerWidth / 2, containerHeight / 2))
-            .force("collision", d3.forceCollide().radius(d => d.radius).strength(0.9)) // High collision strength
-            .force("x", d3.forceX(containerWidth / 2).strength(0.01))
-            .force("y", d3.forceY(containerHeight / 2).strength(0.01))
-            .velocityDecay(0.9)
-            .alphaDecay(0.001)
-            .on("tick", ticked);
-
-        function ticked() {
-            circles
-                .attr("cx", d => Math.max(d.radius + containerWidth/100, Math.min(containerWidth - d.radius - containerWidth/100, d.x)))
-                .attr("cy", d => Math.max(d.radius + containerWidth/100, Math.min(containerHeight - d.radius - containerWidth/100, d.y)));
-        }
-
-        // Set a timeout to stop the simulation after 30 seconds
-        setTimeout(() => {
-            simulation.stop();
-        }, 30000);
-
-        // Initialize the simulation
-        simulation.restart();
-    }
-    createBubbleChart(roleFrequencyContainer, champion);
-
+    // Call function to create bar chart
+    createBarChart(roleFrequencyContainer, champion);
 
     const transactionData = getTransactionData()
     const transactionsByRole = transactionData[1].transactions
     const championName = champion.name;
-
-    // Function to find the most recent game with the specified championName
-    function findRecentGame(transactions, championName) {
-        for (let i = 0; i < transactions.length; i++) {
-            const gameData = transactions[i];
-            if (gameData.includes(championName)) {
-                // Return the first 10 strings in the gameData list
-                return gameData.slice(0, 10);
-            }
-        }
-        // If no game is found with the championName, return an empty list
-        return [];
-    }
 
     const leftGameContainer = moreCard.querySelector('.left-game-container');
     const rightGameContainer = moreCard.querySelector('.right-game-container');
@@ -417,15 +351,20 @@ export function loadMoreCard(championId){
         return; // Exit if not enough containers
     }
 
-    recentGame.forEach((championName, index) => {
-        const recentChampion = getChampionDataByName(championName);
+    recentGame.forEach((recentChampionName, index) => {
+        const recentChampion = getChampionDataByName(recentChampionName);
         const smallImageUrl = recentChampion.imageUrl;
 
         const smallImage = document.createElement('img');
         smallImage.src = smallImageUrl;
-        smallImage.alt = `${championName} image`;
+        smallImage.alt = `${recentChampionName} image`;
         smallImage.style.width = "4vh";
         smallImage.style.height = "4vh";
+
+        if (recentChampionName === championName) {
+            smallImage.style.border = "solid white 0.1vh"
+            smallImage.style.borderRadius = "0.3vh"
+        }
 
         // Append the image to the corresponding container by index
         if (smallImageContainers[index]) {
@@ -474,6 +413,179 @@ export function loadMoreCard(championId){
     redShapes.forEach((shape, index) => {
         shape.textContent = redPicks[index];
     })
+
+    loadChampionsPage(moreCard, champion)
+}
+
+// Helper function to create bar chart
+function createBarChart(roleFrequencyContainer, championData) {
+    // Define margins
+    const computedStyle = window.getComputedStyle(roleFrequencyContainer);
+    const fullWidth = parseFloat(computedStyle.width);
+    const fullHeight = parseFloat(computedStyle.height);
+    const margin = { top: fullHeight*0.1, right: fullHeight*0.1, bottom: fullHeight*0.15, left: fullHeight*0.15 };
+    const width = fullWidth - margin.left - margin.right;
+    const height = fullHeight - margin.top - margin.bottom;
+
+    // Define colors
+    const colors = [
+        'rgba(232,58,58, 1)', // top
+        'rgba(60,138,60, 1)', // jungle
+        'rgba(32,125,212, 1)', // mid
+        'rgba(214,181,15, 1)', // bot
+        'rgba(221,65,210, 1)'  // support
+    ];
+
+    // Role names
+    const roleNames = ["Top", "Jung", "Mid", "Bot", "Supp"];
+
+    // Prepare and sort the data
+    let data = championData.roles.map((frequency, index) => ({
+        frequency,
+        index,
+        role: roleNames[index],
+        color: colors[index]
+    }));
+
+    // Sort data by frequency in descending order
+    data.sort((a, b) => b.frequency - a.frequency);
+
+    // Create the SVG element
+    const svg = d3.select(roleFrequencyContainer)
+        .append("svg")
+        .attr("viewBox", `0 0 ${fullWidth} ${fullHeight}`)
+        .attr("width", '100%')
+        .attr("height", '100%')
+        .append("g")
+        .attr("transform", `translate(${margin.left}, ${margin.top})`);
+
+    const maxFrequency = d3.max(data, d => d.frequency + 1);
+    let tickStep = Math.ceil(maxFrequency / 5);
+    tickStep = tickStep < 1 ? 1 : tickStep; // Ensure at least one step
+    const highestTick = Math.ceil(maxFrequency / tickStep) * tickStep; // Ensure final tick is shown
+
+    // Create scales
+    const xScale = d3.scaleBand()
+        .domain(data.map(d => d.role))
+        .range([0, width])
+        .padding(0.1);
+
+    const yScale = d3.scaleLinear()
+        .domain([0, highestTick])
+        .range([height, 0]);
+
+    const minBarHeight = fullWidth/50; // pixels
+
+    const bars = svg.selectAll("path")
+        .data(data)
+        .enter()
+        .append("path")
+        .attr("d", d => {
+            const x = xScale(d.role);
+            const y = d.frequency === 0 ? height : Math.min(yScale(d.frequency), height - minBarHeight);
+            const width = xScale.bandwidth();
+            const heightBar = d.frequency === 0 ? 0 : Math.max(minBarHeight, height - yScale(d.frequency));
+            const radius = fullWidth/70;
+
+            // Create a path with rounded top and flat bottom
+            return `M${x},${y + radius} 
+                    a${radius},${radius} 0 0 1 ${radius},-${radius} 
+                    h${width - 2 * radius} 
+                    a${radius},${radius} 0 0 1 ${radius},${radius} 
+                    v${heightBar - radius} 
+                    h${-width} 
+                    Z`;
+        })
+        .style("fill", d => d.color);
+
+    // Transparent overlays for generous hover area
+    svg.selectAll(".hover-overlay")
+        .data(data)
+        .enter()
+        .append("rect")
+        .attr("class", "hover-overlay")
+        .attr("x", d => xScale(d.role))
+        .attr("y", d => yScale(d.frequency + 1) - 20) // Starts 20px above the bar
+        .attr("width", xScale.bandwidth())
+        .attr("height", d => (height - yScale(d.frequency + 1)) + 20) // Extends 20px above
+        .style("fill", "none") // Make overlay invisible
+        .style("pointer-events", "all") // Ensures overlay can receive pointer events
+        .on("mouseover", function(event, d) {
+            const x = xScale(d.role) + xScale.bandwidth() / 2;
+            const y = yScale(d.frequency + 1) - 10; // Position tooltip above the bar
+
+            // Brighten the color of the corresponding bar
+            svg.selectAll("path")
+                .filter((p) => p === d)
+                .style("fill", d3.color(d.color).brighter(0.5));
+
+            svg.append("text")
+                .attr("class", "tooltip")
+                .attr("x", x)
+                .attr("y", y)
+                .attr("text-anchor", "middle")
+                .attr("fill", "white")
+                .style("pointer-events", "none") // Ignore pointer events
+                .text(d.frequency);
+        })
+        .on("mouseout", function(event, d) {
+            svg.selectAll("path")
+                .filter((p) => p === d)
+                .style("fill", d.color);
+
+            svg.select(".tooltip").remove(); // Remove tooltip on mouse out
+        });
+
+
+    // Add Axes
+    const xAxis = d3.axisBottom(xScale);
+    svg.append("g")
+        .attr("transform", `translate(0, ${height})`)
+        .call(xAxis)
+        .selectAll("text")   // Select all text elements for the x-axis
+        .style("font-size", `${fullWidth*0.05}`);
+
+    const yAxis = d3.axisLeft(yScale)
+        .tickValues(d3.range(0, highestTick + 1, tickStep))
+        .tickFormat(d3.format("d")); // Ensure integer format
+
+    svg.append("g")
+        .call(yAxis)
+        .selectAll("text")   // Select all text elements for the y-axis
+        .style("font-size", `${fullWidth*0.05}`);
+}
+
+// Helper function to find the most recent game with the specified championName
+function findRecentGame(transactions, championName) {
+    for (let i = 0; i < transactions.length; i++) {
+        const gameData = transactions[i];
+        if (gameData.includes(championName)) {
+            // Return the first 10 strings in the gameData list
+            return gameData.slice(0, 10);
+        }
+    }
+    // If no game is found with the championName, return an empty list
+    return [];
+}
+
+export function updateMoreCardPickPhase(moreCard) {
+    const blueShapes = moreCard.querySelectorAll('.blue-rectangle, .blue-square');
+    const redShapes = moreCard.querySelectorAll('.red-rectangle, .red-square');
+    const relevantPhase = getRelevantPhase()
+
+    blueShapes.forEach((shape, index) => {
+        shape.style.border = 'solid transparent 0.2vh;'
+        if (index === relevantPhase) {
+            shape.style.border = 'solid #b4a8ff 0.1vh'
+        }
+    })
+    redShapes.forEach((shape, index) => {
+        shape.style.border = 'solid transparent 0.2vh;'
+        if (index === relevantPhase - 3 && getDataView() === 'red') {
+            shape.style.border = 'solid #b4a8ff 0.1vh'
+        }
+    })
+
 }
 
 export function updateNavigator(navigator, newPageNumber) {
@@ -485,11 +597,11 @@ export function updateNavigator(navigator, newPageNumber) {
     // Update classes for CSS styling
     pages.forEach((page, index) => {
         if (index === newPageNumber) {
-            page.className = 'current';
+            page.className = 'page current';
         } else if (index === nextLeft) {
-            page.className = 'left';
+            page.className = 'page left';
         } else if (index === nextRight) {
-            page.className = 'right';
+            page.className = 'page right';
         } else {
             page.className = 'page';
         }
@@ -499,6 +611,8 @@ export function updateNavigator(navigator, newPageNumber) {
 export function updatePage(pageNumber) {
     const currentDisplayedCardId = getCurrentDisplayedCardId();
     const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${currentDisplayedCardId}"]`);
+    const pbSection = moreCard.querySelector('.pb-section')
+    const footer = moreCard.querySelector('.footer')
     const frequencySection = moreCard.querySelector('.frequency-section')
     const splashArtContainer = moreCard.querySelector('.splash-art-container')
     const rulesSection = moreCard.querySelector('.rules-section')
@@ -507,28 +621,36 @@ export function updatePage(pageNumber) {
     updateNavigator(navigator, pageNumber); // Update navigator appearance based on new page number
 
     if (pageNumber === 0) {
-        // Background page
-        console.log('page0')
-        moreCard.style.display = 'none';
-        navigator.style.display = 'flex'
+        // Art page
+        frequencySection.style.display = 'none';
+        splashArtContainer.style.display = 'none';
+        rulesSection.style.display = 'none';
+        moreCard.style.backgroundColor = 'transparent';
+        pbSection.style.display = 'none'
+        footer.style.display = 'none'
+
+        navigator.style.display = 'flex';
     }
     if (pageNumber === 1) {
         // Overview page
-        console.log('page1')
-        rulesSection.style.display = 'none'
+        rulesSection.style.display = 'none';
 
+        footer.style.display = 'flex'
+        pbSection.style.display = 'flex'
+        moreCard.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
         frequencySection.style.display = 'flex';
         splashArtContainer.style.display = 'flex';
-        moreCard.style.display = '';
     }
     if (pageNumber === 2) {
         // Rules page
-        console.log('page2')
-        moreCard.style.display = ''
         frequencySection.style.display = 'none';
         splashArtContainer.style.display = 'none';
 
+        footer.style.display = 'flex'
+        pbSection.style.display = 'flex'
+        moreCard.style.backgroundColor = 'rgba(0, 0, 0, 0.4)';
         rulesSection.style.display = 'flex';
-        navigator.style.display= '';
+        navigator.style.display= 'flex';
     }
 }
+

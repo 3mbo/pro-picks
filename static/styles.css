@@ -1,7 +1,7 @@
 h3 {
   text-align: center;
   opacity: 0.5;
-  font-size: 24px;
+  font-size: 2.4vh;
   margin: 0;
   margin-block-start: 1vh;
   margin-block-end: 1vh;
@@ -10,14 +10,14 @@ h3 {
 h4 {
   text-align: center;
   opacity: 0.5;
-  font-size: 20px;
+  font-size: 2vh;
   margin: 0;
 }
 
 h2 {
-  display: flex;
   position: relative;
   opacity: 0.7;
+  font-size: 3vh;
 }
 
 /* General SVG styling */
@@ -184,14 +184,26 @@ body {
   border-radius: 1vh;
   text-align: center;
   position: relative;
-  padding: 0.2vh 1.6vh 1.6vh;
+  padding: 0 1.6vh 1.6vh;
 }
-
-#header-container {
+#stats-section #header-container {
   display: flex;
+  position: sticky;
+  top: 0;
+  background-color: rgb(3, 14, 28);
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 0;
+  z-index: 2;
+  height: 8vh;
+  width: 100%;
+}
+#stats-section #header-container #search-container {
+  display: flex;
+  flex: 1;
+}
+#stats-section #header-container h2 {
+  flex: 1;
+  text-align: center;
 }
 
 #stats-grid {
@@ -230,7 +242,7 @@ body {
 .stats-card-wrapper {
   position: relative;
   background: transparent;
-  z-index: 10;
+  z-index: 1;
   aspect-ratio: 2/3;
   height: 8rem;
   box-sizing: border-box;
@@ -240,7 +252,7 @@ body {
 .role-boxes-container {
   display: flex;
   overflow: hidden;
-  z-index: -4;
+  z-index: -1;
   height: 10%;
   border-top-left-radius: 5px;
   /* Styling for individual role boxes */
@@ -323,19 +335,15 @@ body {
 /* Toggle switch styling */
 .toggle-switch {
   display: flex;
-  width: 44px;
-  height: 16px;
-}
-
-#search-container {
-  display: flex;
+  width: 4.4vh;
+  height: 1.6vh;
 }
 
 #data-view-selector-container {
   top: 0;
   left: 0;
-  width: 36px;
-  padding: 5px;
+  width: 3.6vh;
+  padding: 0.5vh;
 }
 
 #data-view-selector-container label {
@@ -343,7 +351,7 @@ body {
   position: relative;
   transform: translate(2px, -4px);
   margin-top: 0;
-  font-size: 12px;
+  font-size: 1.2vh;
 }
 
 .data-view-toggle-wrapper label {
@@ -358,11 +366,11 @@ body {
 }
 
 .toggle-switch label {
-  margin-right: 5px;
+  margin-right: 0.5vh;
   width: 100%;
   height: 100%;
   background-color: rgb(42, 98, 161);
-  border-radius: 34px;
+  border-radius: 3.4vh;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -370,10 +378,10 @@ body {
 .toggle-switch label:before {
   content: "";
   position: absolute;
-  left: 5px;
-  bottom: 3px;
-  width: 10px;
-  height: 10px;
+  left: 0.5vh;
+  bottom: 0.3vh;
+  width: 1vh;
+  height: 1vh;
   background-color: white;
   border-radius: 50%;
   transition: transform 0.2s;
@@ -384,7 +392,7 @@ body {
 }
 
 .toggle-switch input:checked + label:before {
-  transform: translateX(20px);
+  transform: translateX(2vh);
 }
 
 .inactive-champion {
@@ -392,20 +400,20 @@ body {
   pointer-events: none; /* Disable clicks on the champion */
 }
 
-/* SCSS code for styling the search bar */
+/* Search bar */
 #champion-search-bar {
   position: relative;
   display: flex;
-  width: 40vh;
+  flex: 1;
   background-color: rgba(45, 41, 64, 0.5);
   color: white;
   padding: 1vh;
-  border-radius: 10px;
+  border-radius: 1vh;
   border: none;
   outline: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   margin: 0;
-  font-size: 14px;
+  font-size: 1.4vh;
   /* Add a transition for smooth hover effect */
   transition: all 0.3s ease;
   /* Add a hover effect */
@@ -421,20 +429,20 @@ body {
 }
 
 ::-webkit-scrollbar {
-  width: 12px !important;
-  height: 12px !important;
+  width: 1.2vh !important;
+  height: 1.2vh !important;
 }
 
 ::-webkit-scrollbar-track {
   background-color: rgba(45, 41, 64, 0.5) !important;
-  border-radius: 10px !important;
-  margin-top: 2px;
-  margin-bottom: 2px;
+  border-radius: 1vh !important;
+  margin-top: 0.2vh;
+  margin-bottom: 0.2vh;
 }
 
 ::-webkit-scrollbar-thumb {
   background-color: #413c6e !important;
-  border-radius: 10px !important;
+  border-radius: 1vh !important;
   min-height: 8vh;
 }
 
@@ -471,7 +479,7 @@ body {
   border-radius: 10px;
   background-color: rgba(0, 0, 0, 0.4);
   position: relative;
-  width: 60vw;
+  width: 60vh;
   height: 82.4vh;
   aspect-ratio: 63/88;
   display: flex;
@@ -498,8 +506,7 @@ body {
   line-height: 0;
   font-size: 4vh;
   font-weight: 900;
-  font-family: "Cinzel", serif;
-  text-shadow: 0.2vh 0.2vh 0.8vh rgba(0, 0, 0, 0.7), 1vh 1vh 3vh rgb(0, 0, 0); /* Larger, more blurred shadow for a glow effect */
+  text-shadow: -0.25vh 0.25vh 0 #000, 0.25vh 0.25vh 0 #000, 0.25vh -0.25vh 0 #000, -0.25vh -0.25vh 0 #000;
 }
 .more-card .header .pb-section {
   display: flex;
@@ -512,13 +519,13 @@ body {
   text-align: center;
   flex-direction: column;
   line-height: 0;
-  text-shadow: 0.2vh 0.2vh 0.8vh rgba(0, 0, 0, 0.7), 1vh 1vh 3vh rgb(0, 0, 0);
+  text-shadow: -0.1vh 0.1vh 0 #000, 0.1vh 0.1vh 0 #000, 0.1vh -0.1vh 0 #000, -0.1vh -0.1vh 0 #000;
 }
 .more-card .header .pb-section .pb-pct {
   border: none;
 }
 .more-card .splash-art-container {
-  width: 88%;
+  width: 53vh;
   height: 29vh;
   overflow: hidden;
   margin-bottom: 4vh;
@@ -555,7 +562,7 @@ body {
   align-items: center;
   height: 4vh;
   width: 100%;
-  text-shadow: 0.2vh 0.2vh 0.8vh rgba(0, 0, 0, 0.7), 1vh 1vh 3vh rgb(0, 0, 0); /* Larger, more blurred shadow for a glow effect */
+  text-shadow: -0.1vh 0.1vh 0 #000, 0.1vh 0.1vh 0 #000, 0.1vh -0.1vh 0 #000, -0.1vh -0.1vh 0 #000;
 }
 .more-card .navigator .go-left {
   display: flex;
@@ -576,16 +583,41 @@ body {
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  position: relative;
   gap: 1vh;
-  font-size: 2.5vh;
-  margin-left: 1vh;
-  margin-right: 1vh;
+  width: 30vh;
+  margin: 0 1vh;
+}
+.more-card .navigator .page-container .page {
+  position: absolute;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+.more-card .navigator .page-container .left {
+  width: 10vh;
+  transform: translate(-12vh, -0.5vh);
+  opacity: 0.6;
+  font-size: 1.5vh;
+  text-align: right;
+}
+.more-card .navigator .page-container .current {
+  width: 12vh;
+  transform: translateX(0);
+  opacity: 1;
+  font-size: 2.2vh;
+  text-align: center;
+}
+.more-card .navigator .page-container .right {
+  width: 10vh;
+  transform: translate(12vh, -0.5vh);
+  opacity: 0.6;
+  font-size: 1.5vh;
+  text-align: left;
 }
 .more-card .frequency-section {
   display: flex;
   justify-content: center;
   height: 34vh;
-  width: 88%;
+  width: 53vh;
   margin-left: 6%;
   margin-right: 6%;
   text-align: center;
@@ -600,7 +632,7 @@ body {
 }
 .more-card .frequency-section .frequency-title-container {
   display: flex;
-  height: 4vh;
+  height: 7vh;
   align-items: center;
   justify-content: center;
   padding: 1vh;
@@ -609,11 +641,11 @@ body {
   font-size: 2vh;
   margin: 0;
   padding: 0;
-  text-shadow: 0.2vh 0.2vh 0.8vh rgba(0, 0, 0, 0.7), 1vh 1vh 3vh rgb(0, 0, 0); /* Larger, more blurred shadow for a glow effect */
+  text-shadow: -0.1vh 0.1vh 0 #000, 0.1vh 0.1vh 0 #000, 0.1vh -0.1vh 0 #000, -0.1vh -0.1vh 0 #000;
 }
 .more-card .frequency-section .role-frequency-section {
   width: 24vh;
-  height: 30vh;
+  height: 34vh;
   align-items: center;
   display: flex;
   flex: 0 0 auto;
@@ -624,6 +656,7 @@ body {
 .more-card .frequency-section .role-frequency-section .role-frequency-container {
   width: 24vh;
   height: 26vh;
+  transform: translateY(-1vh);
   align-items: start;
 }
 .more-card .frequency-section .role-frequency-section .role-frequency-container svg {
@@ -663,28 +696,18 @@ body {
   width: 4vh;
   height: 4vh;
   border-radius: 0.5vh;
-  border: solid 0.2vh rgba(136, 114, 73, 0.4);
   background-color: #004473;
+  border: solid transparent 0.2vh;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 .more-card .frequency-section .pick-frequency-section .picks-container .blue-container .blue-rectangle {
   width: 4vh;
+  border: solid transparent 0.2vh;
   height: 8.7vh;
   border-radius: 0.5vh;
   background-color: #004473;
-  border: solid 0.2vh rgba(136, 114, 73, 0.4);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.more-card .frequency-section .pick-frequency-section .picks-container .blue-container .blue-rectangle-2 {
-  width: 4vh;
-  height: 8.7vh;
-  border-radius: 0.5vh;
-  background-color: #004473;
-  border: solid 0.2vh rgba(136, 114, 73, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -699,9 +722,9 @@ body {
 .more-card .frequency-section .pick-frequency-section .picks-container .red-container .red-rectangle {
   width: 4vh;
   height: 8.7vh;
+  border: solid transparent 0.2vh;
   border-radius: 0.5vh;
   background-color: #8e0d35;
-  border: solid 0.2vh rgba(136, 114, 73, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -709,9 +732,9 @@ body {
 .more-card .frequency-section .pick-frequency-section .picks-container .red-container .red-square {
   width: 4vh;
   height: 4vh;
+  border: solid transparent 0.2vh;
   border-radius: 0.5vh;
   background-color: #8e0d35;
-  border: solid 0.2vh rgba(136, 114, 73, 0.4);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -746,8 +769,7 @@ body {
 .more-card .frequency-section .recent-game-section .game-container .left-game-container .small-image-container, .more-card .frequency-section .recent-game-section .game-container .right-game-container .small-image-container {
   height: 4vh;
   width: 4vh;
-  border-radius: 0.5vh;
-  border: solid rgba(136, 114, 73, 0.6) 0.2vh;
+  border-radius: 0.3vh;
 }
 .more-card .rules-section {
   height: 100%;
@@ -759,25 +781,114 @@ body {
   justify-content: start;
   align-items: center;
 }
-.more-card .rules-section .rules-single-container {
-  height: 29vh;
-  width: 88%;
-  margin-bottom: 4vh;
-  text-align: center;
-  border: solid rgba(136, 114, 73, 0.6) 0.2vh;
-  border-radius: 1vh;
-  background-color: rgba(3, 14, 28, 0.4);
+.more-card .rules-section .rules-enemies-container .vertical-title-container {
+  border-right: 0.2vh solid #bc4242 !important;
 }
-.more-card .rules-section .rules-multi-container {
-  height: 34vh;
-  width: 88%;
-  text-align: center;
+.more-card .rules-section .rules-allies-container,
+.more-card .rules-section .rules-enemies-container {
+  height: 28vh;
+  width: 53vh;
+  padding: 0.5vh;
+  margin-bottom: 4vh;
   border: solid rgba(136, 114, 73, 0.6) 0.2vh;
   border-radius: 1vh;
   background-color: rgba(3, 14, 28, 0.4);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+.more-card .rules-section .rules-allies-container .vertical-title-container,
+.more-card .rules-section .rules-enemies-container .vertical-title-container {
+  width: 8vh;
+  margin-right: 1vh;
+  height: 90%;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1vh;
+  font-size: 1.4vh;
+  align-items: center;
+  border-right: 0.2vh solid #3ba0df;
+  text-shadow: -0.1vh 0.1vh 0 #000, 0.1vh 0.1vh 0 #000, 0.1vh -0.1vh 0 #000, -0.1vh -0.1vh 0 #000;
+}
+.more-card .rules-section .rules-allies-container .vertical-title-container span,
+.more-card .rules-section .rules-enemies-container .vertical-title-container span {
+  writing-mode: vertical-lr;
+  text-orientation: upright;
+  font-size: 3vh;
+  text-shadow: -0.15vh 0.15vh 0 #000, 0.15vh 0.15vh 0 #000, 0.15vh -0.15vh 0 #000, -0.15vh -0.15vh 0 #000;
+}
+.more-card .rules-section .rules-allies-container .ae-container,
+.more-card .rules-section .rules-enemies-container .ae-container {
+  flex: 1;
+  display: flex;
+  height: 100%;
+  width: 39vh;
+  flex-direction: column;
+}
+.more-card .rules-section .rules-allies-container .ae-container .info,
+.more-card .rules-section .rules-enemies-container .ae-container .info {
+  font-size: 1.3vh;
+  width: 100%;
+  height: 2vh;
+  max-width: 17vh;
+  border-radius: 0.5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  text-shadow: -0.1vh 0.1vh 0 #000, 0.1vh 0.1vh 0 #000, 0.1vh -0.1vh 0 #000, -0.1vh -0.1vh 0 #000;
+}
+.more-card .rules-section .rules-allies-container .ae-container .info .frequency,
+.more-card .rules-section .rules-enemies-container .ae-container .info .frequency {
+  border-right: solid rgba(136, 114, 73, 0.6) 0.2vh;
+  width: 50%;
+  text-align: center;
+}
+.more-card .rules-section .rules-allies-container .ae-container .info .delta,
+.more-card .rules-section .rules-enemies-container .ae-container .info .delta {
+  width: 50%;
+  text-align: center;
+}
+.more-card .rules-section .rules-allies-container .ae-container .ae-grid,
+.more-card .rules-section .rules-enemies-container .ae-container .ae-grid {
+  display: grid;
+  margin-top: 0.5vh;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 1vh;
+}
+.more-card .rules-section .rules-allies-container .ae-container .ae-grid .ae-wrapper,
+.more-card .rules-section .rules-enemies-container .ae-container .ae-grid .ae-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5vh;
+}
+.more-card .rules-section .rules-allies-container .ae-container .ae-grid .ae-wrapper .small-image-container,
+.more-card .rules-section .rules-enemies-container .ae-container .ae-grid .ae-wrapper .small-image-container {
+  width: 5vh;
+  height: 5vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.more-card .rules-section .rules-allies-container .ae-container .ae-grid img,
+.more-card .rules-section .rules-enemies-container .ae-container .ae-grid img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
 .more-card .footer {
   display: flex;
+  position: absolute;
+  bottom: 0;
   flex: 0.1;
   justify-content: space-between;
   width: 100%;
@@ -788,6 +899,12 @@ body {
   flex: 1;
   font-size: 1.5vh;
   transform: translate(4vh, 0);
+  text-shadow: -0.1vh 0.1vh 0 #000, 0.1vh 0.1vh 0 #000, 0.1vh -0.1vh 0 #000, -0.1vh -0.1vh 0 #000;
+}
+
+.tooltip {
+  fill: white;
+  font-size: 1.5vh;
 }
 
 /*# sourceMappingURL=styles.css.map */

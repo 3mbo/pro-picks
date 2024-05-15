@@ -12,6 +12,7 @@ const selectedRoles = new Set([])
 let championData = {}
 let allChampionData = []
 let transactionData = {}
+let relevantPhase = null
 
 const loaded = new Set([])
 let currentDisplayedCardId = null; // Variable to track the ID of the currently displayed card
@@ -73,6 +74,8 @@ export function loadChampionData() {
             const redPicks = JSON.parse(champion.dataset.redPicks);
             const redBans = JSON.parse(champion.dataset.redBans);
             const roles = JSON.parse(champion.dataset.roles);
+            const allies = JSON.parse(champion.dataset.allies);
+            const enemies = JSON.parse(champion.dataset.enemies);
             const pick_total = parseInt(champion.dataset.pick_total, 10);
             const relevance = parseInt(champion.dataset.relevance, 10);
 
@@ -82,6 +85,8 @@ export function loadChampionData() {
                 name: champion.dataset.name,
                 imageUrl: champion.dataset.imageUrl,
                 roles: roles,
+                allies: allies,
+                enemies: enemies,
                 relevance: relevance,
                 pick_total: pick_total,
                 // Store parsed blue and red picks and bans in the data object
@@ -172,20 +177,22 @@ export function getRelevantSlots(dataView) {
 
     // Check the value of dataView
     if (dataView === 'blue') {
-        // Conditions for 'blue' dataView (similar to highlightRelevantSlots)
         if (firstOpenSlot) {
             if (firstOpenSlot.id === 'slot_1') {
                 relevantSlots.push(firstOpenSlot);
+                relevantPhase = 0;
             } else if (firstOpenSlot.id === 'slot_2' || firstOpenSlot.id === 'slot_3') {
                 const slot2 = document.getElementById('slot_2');
                 const slot3 = document.getElementById('slot_3');
-                if (slot2) relevantSlots.push(slot2);
-                if (slot3) relevantSlots.push(slot3);
+                relevantSlots.push(slot2);
+                relevantSlots.push(slot3);
+                relevantPhase = 1;
             } else if (firstOpenSlot.id === 'slot_4' || firstOpenSlot.id === 'slot_5') {
                 const slot4 = document.getElementById('slot_4');
                 const slot5 = document.getElementById('slot_5');
-                if (slot4) relevantSlots.push(slot4);
-                if (slot5) relevantSlots.push(slot5);
+                relevantSlots.push(slot4);
+                relevantSlots.push(slot5);
+                relevantPhase = 2;
             }
         }
     } else if (dataView === 'red') {
@@ -194,23 +201,31 @@ export function getRelevantSlots(dataView) {
             if (firstOpenSlot.id === 'slot_1' || firstOpenSlot.id === 'slot_2') {
                 const slot1 = document.getElementById('slot_1');
                 const slot2 = document.getElementById('slot_2');
-                if (slot1) relevantSlots.push(slot1);
-                if (slot2) relevantSlots.push(slot2);
+                relevantSlots.push(slot1);
+                relevantSlots.push(slot2);
+                relevantPhase = 3;
             } else if (firstOpenSlot.id === 'slot_3') {
                 const slot3 = document.getElementById('slot_3');
-                if (slot3) relevantSlots.push(slot3);
+                relevantSlots.push(slot3)
+                relevantPhase = 4;
             } else if (firstOpenSlot.id === 'slot_4') {
                 const slot4 = document.getElementById('slot_4');
-                if (slot4) relevantSlots.push(slot4);
+                relevantSlots.push(slot4);
+                relevantPhase = 5;
             } else if (firstOpenSlot.id === 'slot_5') {
                 const slot5 = document.getElementById('slot_5');
-                if (slot5) relevantSlots.push(slot5);
+                relevantSlots.push(slot5);
+                relevantPhase = 6;
             }
         }
     }
 
     // Return the array of relevant slots
     return relevantSlots;
+}
+
+export function getRelevantPhase() {
+    return relevantPhase
 }
 
 // Function to set the state of a lit role selector for a given slot

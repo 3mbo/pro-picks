@@ -37,11 +37,11 @@
                             </div>
                         </div>
                     </div>
-                    <h2> Champion Cards </h2>
+                    <h2> Champions </h2>
                     <!-- Search Bar -->
                     <div id="search-container">
                         <label for="champion-search-bar"></label>
-                        <input type="text" id="champion-search-bar" placeholder="Search champion cards..." />
+                        <input type="text" id="champion-search-bar" placeholder="Search champions..." />
                     </div>
                 </div>
                 <div id="stats-grid">
@@ -68,14 +68,12 @@
                     {% endfor %}
                 </div>
                 <!-- Sideboard -->
-                <h3> Sideboard </h3>
-                <h4> (These cards have been played, but not in this order)</h4>
+                <h3> Data from other pick phases </h3>
                 <div id="sideboard">
                     <!-- Stats cards-->
                 </div>
                 <!-- Commons -->
-                <h3>Commons</h3>
-                <h4> (No data)</h4>
+                <h3>No data</h3>
                 <div id="commons">
                     <!-- Stats cards-->
                 </div>
@@ -117,14 +115,14 @@
                                 <p>Q</p>
                             </div>
                             <div class="page-container">
-                                <div class="page">
-                                    <p>Art</p>
+                                <div class="page left">
+                                    <p>Card Art</p>
                                 </div>
-                                <div class="page">
+                                <div class="page current">
                                     <p>Overview</p>
                                 </div>
-                                <div class="page">
-                                    <p>Rules</p>
+                                <div class="page right">
+                                    <p>Champions</p>
                                 </div>
                             </div>
                             <div class="go-right">
@@ -136,14 +134,14 @@
                             <!-- Pick Frequency Section -->
                             <div class="pick-frequency-section">
                                 <div class="frequency-title-container">
-                                    <p class="frequency-title">Pick Order</p>
+                                    <p class="frequency-title">Pick Phase</p>
                                 </div>
                                 <div class="picks-container">
                                     <!-- Blue Container -->
                                     <div class="blue-container">
                                         <div class="blue-square">1</div>
                                         <div class="blue-rectangle">2</div>
-                                        <div class="blue-rectangle-2">3</div>
+                                        <div class="blue-rectangle">3</div>
                                     </div>
 
                                     <!-- Red Container -->
@@ -168,7 +166,7 @@
                             <!-- Recent Game Section -->
                             <div class="recent-game-section">
                                 <div class="frequency-title-container">
-                                    <p class="frequency-title">Recent Game</p>
+                                    <p class="frequency-title">Recent Game (By Role)</p>
                                 </div>
                                 <div class="game-container">
                                     <div class="left-game-container">
@@ -191,8 +189,54 @@
                             </div>
                         </div>
                         <div class="rules-section">
-                            <div class="rules-single-container">This is where the single rules will go</div>
-                            <div class="rules-multi-container">This is where the multi rules will go</div>
+                            <div class="rules-allies-container">
+                                <div class="vertical-title-container">
+                                    Frequent
+                                    <span>ALLY</span>
+                                    Champions
+                                </div>
+                                <div class="ae-container">
+                                    <div class="info">
+                                        <span class="frequency">Frequency</span>
+                                        <span class="delta">Delta</span>
+                                    </div>
+                                    <div class="ae-grid">
+                                         {% for _ in range(15) %}
+                                            <div class="ae-wrapper">
+                                                <div class="small-image-container"></div>
+                                                <div class="info">
+                                                    <span class="frequency"> </span>
+                                                    <span class="delta"> </span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="rules-enemies-container">
+                                <div class="vertical-title-container">
+                                    Frequent
+                                    <span>ENEMY</span>
+                                    Champions
+                                </div>
+                                <div class="ae-container">
+                                    <div class="info">
+                                        <span class="frequency">Frequency</span>
+                                        <span class="delta">Delta</span>
+                                    </div>
+                                    <div class="ae-grid">
+                                        {% for _ in range(15) %}
+                                            <div class="ae-wrapper">
+                                                <div class="small-image-container"></div>
+                                                <div class="info">
+                                                    <span class="frequency"> </span>
+                                                    <span class="delta"> </span>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <!-- Footer -->
                         <div class="footer">
@@ -220,6 +264,8 @@
                 data-pick_total="{{ champion.pick_total }}"
                 data-ban_total="{{ champion.ban_total }}"
                 data-pb_pct="{{ champion.pb_pct }}"
+                data-allies="{{ champion.allies }}"
+                data-enemies="{{ champion.enemies }}"
                 data-image-url="https://raw.communitydragon.org/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/{{ champion.id }}.png">
             </div>
         {% endfor %}

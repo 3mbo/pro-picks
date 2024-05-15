@@ -21,6 +21,7 @@ import {
     filterChampionsBySelectedRoles,
     highlightRelevantSlots,
     loadMoreCard,
+    updateMoreCardPickPhase,
     updatePage
 } from './displayUpdate.js';
 
@@ -164,13 +165,18 @@ function hideCurrentDisplayedCard() {
 function displayMoreCard(championId) {
     const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${championId}"]`);
     const moreCardBackground = document.querySelector(`#more-cards-section .more-card-background[data-id="${championId}"]`);
+
     if (!getLoaded().has(championId)) {
         loadMoreCard(championId);
         addLoaded(championId);
     }
+
     moreCardBackground.style.display = 'flex';
     moreCard.style.display = '';
     setCurrentDisplayedCardId(championId); // Update currently displayed card ID
+    setPageNumber(1);
+    updatePage(1);
+    updateMoreCardPickPhase(moreCard);
 }
 
 export function handleSearchInput() {

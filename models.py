@@ -24,8 +24,12 @@ class Champion(db.Model):
     # Attribute to store role stats in the order: Top, Jungle, Mid, Bot, Support
     roles = db.Column(db.JSON, nullable=False, default=lambda: [0, 0, 0, 0, 0])
 
-    # Attribute to store the organized rules data in JSON format
-    rules = db.Column(db.JSON, nullable=True)
+    # Attribute to store the rules in JSON format
+    rules = db.Column(db.JSON, nullable=True, default='{}')
+
+    # Attributes to store frequent allies and enemies:
+    allies = db.Column(db.JSON, nullable=True, default='{}')
+    enemies = db.Column(db.JSON, nullable=True, default='{}')
 
     # Relationship with Slot model
     slots = db.relationship('Slot', back_populates='champion', lazy=True)

@@ -60,6 +60,7 @@ def generate_image(api_key, prompt):
 key = 'sk-proj-qjJ79ErtS4feg3Jvyy3wT3BlbkFJvl0jM9bENGjcrIqIg7H2'
 
 names = [
+
 ]
 
 for name in names:
