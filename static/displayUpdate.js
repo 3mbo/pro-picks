@@ -293,7 +293,6 @@ function loadAlliesEnemies(container, AEStats) {
     // Sort the stats by frequency in descending order
     AEStats.sort((a, b) => b[1] - a[1]);
     const AEWrappers = container.querySelectorAll('.ae-wrapper')
-    console.log(AEWrappers)
 
     AEWrappers.forEach((AEWrapper, index) => {
         if (!AEStats[index]) {
@@ -574,18 +573,18 @@ export function updateMoreCardPickPhase(moreCard) {
     const relevantPhase = getRelevantPhase()
 
     blueShapes.forEach((shape, index) => {
-        shape.style.border = 'solid transparent 0.2vh;'
+        shape.style.border = 'solid transparent 0.2vh'
         if (index === relevantPhase) {
-            shape.style.border = 'solid #b4a8ff 0.1vh'
+            shape.style.border = 'solid #b4a8ff 0.2vh'
+            console.log(shape)
         }
     })
     redShapes.forEach((shape, index) => {
-        shape.style.border = 'solid transparent 0.2vh;'
+        shape.style.border = 'solid transparent 0.2vh'
         if (index === relevantPhase - 3 && getDataView() === 'red') {
-            shape.style.border = 'solid #b4a8ff 0.1vh'
+            shape.style.border = 'solid #b4a8ff 0.2vh'
         }
     })
-
 }
 
 export function updateNavigator(navigator, newPageNumber) {
