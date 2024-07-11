@@ -165,7 +165,7 @@ export function displayRelevantData(dataView, initial) {
     });
     if (initial) {
         const invisible_filler0 = document.createElement('div')
-        invisible_filler0.style.flex = "10";
+        invisible_filler0.style.flex = "0.87";
 
         const invisible_filler1 = invisible_filler0.cloneNode(true)
         const invisible_filler2 = invisible_filler0.cloneNode(true)
@@ -190,8 +190,6 @@ export function displayRelevantData(dataView, initial) {
         statsGrid.appendChild(invisible_filler0)
         sideboard.appendChild(invisible_filler1)
         commons.appendChild(invisible_filler2)
-
-
     }
 
     console.log(`Displaying ${dataView} data for champions with slotIndexConstant ${slotIndexConstant}.`);
@@ -322,7 +320,7 @@ function loadAlliesEnemies(container, AEStats) {
     });
 }
 
-
+// Shows and creates elements for the detailed card on the right
 export function loadMoreCard(championId){
     const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${championId}"]`);
     const champion = getChampionData(championId);
@@ -567,6 +565,7 @@ function findRecentGame(transactions, championName) {
     return [];
 }
 
+// Updates the highlighted pick phase rectangle for the user's current draft
 export function updateMoreCardPickPhase(moreCard) {
     const blueShapes = moreCard.querySelectorAll('.blue-rectangle, .blue-square');
     const redShapes = moreCard.querySelectorAll('.red-rectangle, .red-square');
@@ -587,6 +586,7 @@ export function updateMoreCardPickPhase(moreCard) {
     })
 }
 
+// Updates navigator for the more card when user navigates
 export function updateNavigator(navigator, newPageNumber) {
     const pages = navigator.querySelectorAll('.page')
     const totalPages = pages.length;
@@ -607,6 +607,7 @@ export function updateNavigator(navigator, newPageNumber) {
     });
 }
 
+// Navigates through more card pages
 export function updatePage(pageNumber) {
     const currentDisplayedCardId = getCurrentDisplayedCardId();
     const moreCard = document.querySelector(`#more-cards-section .more-card[data-id="${currentDisplayedCardId}"]`);
