@@ -1,10 +1,10 @@
 # Pro Picks
 
-An interactive drafting web app to fetch and display data from League of Legends pro matches with a unique emphasis on draft order. Designed to show the champions that teams are picking, and when they're picking them.
+An interactive drafting web app to fetch and display data from League of Legends pro matches with a unique emphasis on draft order. Designed to show the champions that teams are picking, and when they are picking them.
 
-### Gif
+## Gif (top right to expand)
 ![Animation](https://github.com/3mbo/ProPicks/assets/166320901/71e9f86f-3925-472f-8373-386cdb9032bc)
-## Examples
+## Images
 ![chrome_I3ILRWgSkf](https://github.com/3mbo/ProPicks/assets/166320901/d0a9d4b8-ba0e-4b52-8860-076dcb754f32)
 ![chrome_qHLpLtdHYX](https://github.com/3mbo/ProPicks/assets/166320901/aab730a5-476c-453d-b01e-93f02ee192b8)
 
