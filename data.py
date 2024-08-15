@@ -10,7 +10,7 @@ from models import Champion, CachedTransactions
 
 def fetch_champion_data():
     """Fetches esports data from the Riot Ddragon API."""
-    url = 'https://ddragon.leagueoflegends.com/cdn/14.8.1/data/en_US/champion.json'
+    url = 'https://ddragon.leagueoflegends.com/cdn/14.16.1/data/en_US/champion.json'
     response = requests.get(url)
 
     if response.status_code != 200:
@@ -228,6 +228,7 @@ def store_esports_data(data_prepped):
     now = datetime.now()
     for champion_name, data_pb in data_pb.items():
         # Query the database to find the Champion object
+        print(champion_name)
         champion = Champion.query.filter_by(name=champion_name).first()
 
         # Update the last updated date

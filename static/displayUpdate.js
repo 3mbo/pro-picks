@@ -165,7 +165,7 @@ export function displayRelevantData(dataView, initial) {
     });
     if (initial) {
         const invisible_filler0 = document.createElement('div')
-        invisible_filler0.style.flex = "0.87";
+        invisible_filler0.style.flex = "0.95";
 
         const invisible_filler1 = invisible_filler0.cloneNode(true)
         const invisible_filler2 = invisible_filler0.cloneNode(true)
