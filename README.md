@@ -2,6 +2,8 @@
 
 An interactive drafting web app to fetch and display data from League of Legends pro matches with a unique emphasis on draft order. Designed to show the champions that teams are picking, and when they are picking them.
 
+Hosted at https://3mbo.pythonanywhere.com/ (Free service, may take a moment to load)
+
 ## Gif (top right to expand)
 ![Animation](https://github.com/3mbo/ProPicks/assets/166320901/71e9f86f-3925-472f-8373-386cdb9032bc)
 ## Images
